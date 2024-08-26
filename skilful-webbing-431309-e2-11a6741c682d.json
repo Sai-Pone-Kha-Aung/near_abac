@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "skilful-webbing-431309-e2",
+  "private_key_id": "11a6741c682d4950020ce5a6f539049dd9864194",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDGL02Av4Ov92Hb\nTpveq4WwZfw+9XBklsqcf79OhUsiyTn1jediZ/dobbzeHnL73ong8inRD31BiyK6\n1cY7BA+MZcjlwRnYbY8GFMz/dedwnuOjrgHtKlvXg9fhSviYPgWEMSrVyqNmmUiy\nMwpZAzaUu6aRNyyrJ2w2802ZX+kTkdvKn35hO/wHyHDfHrN3YT1uHC7zALgy7R2+\nN+iTqxsfFNIYgo81PR2VIBydg1ttP/FXWOtD5dqzUZ8IkFm9zCAtpf2RlTHCXq15\nLF+5ZoUXY+IAJZ0KCMRxR4IepZdAudDfwcXnS/kuySmQ6WIksqXXcek20q0inYIY\n+ii7GExXAgMBAAECggEAAvfTY9G6cai1TPkE6ZVNB8LHP9QiLkd52lUpcs4ZPXih\nBxXseLNQ5734/aScGTyQeQ93Y9ulBxXD2+N2uAyMBRDDLPmy3uRpJ3CpT0wfPrcK\ndrmU6s3fGT+uvH+IcJNBNuUbnJ8PymoSRiTwizu6lginanZWk2ugOcR0DY97qKDY\nTQKSCRVX747001HucIaoFhrhACm8qwPTZ1SQRiiw7yRlzreiSgGAePL8l7yAtKzH\nSeMpB5aVmipI4FnZnET8lgU9OymryeKSHL1iF+pmmlmmqr6L5GG4HfBvaOjoMvYU\ncEZjq5NfgJJqlWQIIVhJW3zSBywK4B2GwZjlEFmC5QKBgQD8Vdm21F+P1UxPHRKd\n3Tl0ykcTdyF+57ueZZJ/lJxsnYI03IoU6Hj05z04/7mI0OxhWlq2+BwQJ398xlZF\nDe/zYYZdmWP4Y14ffwCJ0rTUll2ryFRmKu7WiCPQ7Pd0Im7dCBEk/JWcV2BzydH7\nc9p+0EXr8mZWu+hdN/AW75Ox8wKBgQDJECCqTDU6iRtlXrx3CBF0MdxiBrMO2Apl\nF7WN2FV4sG9JFo62H2/rAcCUZdECr8MTI96JIT51+UQ76iOo71h+9JjXz8o19zr6\n69O4WZbR0vzRTlKtsjXWhoirwdV+T6V8KV+Gtok4Nbf13FGPSAOoU2q2t0xfv+94\n1SHkm8RxDQKBgQDkgYoKuv9e7TWRXy6ArtldHeCHjBZVKd0Jb8nepuGQqoJDBIQ2\nst72SIF0oH+PmkK1VnFXyA8BwgL9J07wcdKdf++By2pwgOu3cfc22AzRhumEqoFj\nk/V9aQOmKzFbheMHXkrIR8PkNGwv7s+s+hkfRdRL+tMaMEgYQpO08Xe6aQKBgA9R\ndDulPLTt9zFc61ziN3ozxkeNnRy3ZutWyBU7cx+TyZa26j6D3KH56zMjIq5it6kA\npZaq+rhAOmuaJgdb3NEnT3G5uf0sjcjKKMI1ySDJQ0uq/O+Q0Ts72rPDO8G4zbHM\n8SMxSvkGVrKbi3cwFF9Bo7Kx+ladJ+B71G43U9sNAoGAK4DVMV0rsWrv2E7/xTlI\njhxrHEF0Od5bCpuKf9EhMf43PE7H7HhFvOUHCnEQyBNKJqnH/XvAl9lxUm1GDRu0\n2fKwTpiW/oXuKl/CBJ42WlYItHsZLQ6b69a9lpficI+CJ/bnyNvG0fkBkte7BRM0\n7PjgVMX/kMj47puaDX6Ys6g=\n-----END PRIVATE KEY-----\n",
+  "client_email": "near-abac@skilful-webbing-431309-e2.iam.gserviceaccount.com",
+  "client_id": "105515465302618437962",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/near-abac%40skilful-webbing-431309-e2.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
