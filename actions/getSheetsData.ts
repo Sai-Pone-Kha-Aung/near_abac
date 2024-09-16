@@ -1,31 +1,30 @@
 import { useState, useEffect } from 'react';
 import { sheetsData } from '@/types/types';
-import { getData } from '@/app/api/postData/route';
+import axios from 'axios';
 
+const getSheetsData = () => {
 
-const useFetchData = () => {
-
-    const [data, setData] = useState<sheetsData[]>([]);
+    const [data, setData] = useState<sheetsData[]>();
     const [error, setError] = useState<string>();
-    const range = 'Sheet1!A1:K';
-
+    const range = 'Sheet1!A1:I';
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`/api/postData?range=${encodeURIComponent(range)}`);
-                if (!response.ok) {
+                const response = await axios.get(`/api/postData?range=${encodeURIComponent(range)}`);
+                if (response.status !== 200) {
                     throw new Error('Network response was not ok');
                 }
-                const data: sheetsData[] = await response.json();
+                const data: sheetsData[] = response.data;
                 setData(data);
             } catch (error) {
                 setError('Failed to fetch data');
             }
         };
         fetchData();
-    }, [])
+    }, [range])
 
     return { data, error };
 }
 
-export default useFetchData;
+export default getSheetsData;

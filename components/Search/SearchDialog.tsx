@@ -1,42 +1,74 @@
-"use client"
-import { useState } from 'react';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Command, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { sheetsData } from "@/types/types";
 
 interface SearchDialogProps  {
-  isDarkMode: boolean;
   isDialogOpen: boolean;
-  setIsDialogOpen: (open: boolean) => void;
-  searchQuery: string;
-  handleSearch: (query: string) => void;
-  filteredCategories: string[];
-  handleSelect: (category: string) => void;
-  handleButtonSearch: () => void;
+  onClose: () => void;
 }
 
-const SearchDialog = ({
-  isDarkMode,
-  isDialogOpen,
-  setIsDialogOpen,
-  searchQuery,
-  handleSearch,
-  filteredCategories,
-  handleSelect,
-  handleButtonSearch
-}: SearchDialogProps) => {
-    return (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
+const SearchDialog = ({onClose}: SearchDialogProps) => {
+    const [data, setData] = useState<sheetsData[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
+    const router = useRouter();
+    const range = 'Sheet1!A1:M';
+    
+    useEffect(() => {
+        if(isDialogOpen){
+            const fetchData = async () => {
+                const response = await fetch(`/api/postData?range=${encodeURIComponent(range)}`); // Replace with your API endpoint
+                const result = await response.json();
+                setData(result);
+            };
+            fetchData();
+        }
+    }, [isDialogOpen]);
 
+    useEffect(() => {
+        const uniqueCategories = Array.from(new Set((data || []).map(category => category.category)));
+        setFilteredCategories(uniqueCategories);
+    }, [data]);
+
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
+        if (query) {
+          const filtered = filteredCategories.filter(category => category.toLowerCase().includes(query.toLowerCase()));
+          console.log('Filtered Categories:', filtered); 
+          setFilteredCategories(filtered);
+        } else {
+          console.log('Resetting Filtered Categories:', filteredCategories); 
+          setFilteredCategories(filteredCategories);
+        }
+    }
+    
+    const handleSelect = (category: string) => {
+    setSearchQuery(category);
+    setFilteredCategories([category]);
+    }
+    
+    const handleButtonSearch = () => {
+    if (searchQuery) {
+        router.push(`/category/${searchQuery}`);
+        onClose();
+        setIsDialogOpen(false);
+    }
+    }
+
+    return (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
+                    <DialogTrigger asChild>
                     <Button 
                         data-testid="search-dialog"
                         variant="outline"
-                        className={`hidden md:inline-flex ${isDarkMode ? 'bg-black/80 text-white' : 'bg-white text-black'}`}
-                        onClick={() => setIsDialogOpen(false)}
+                        onClick={() => setIsDialogOpen(true)}
+                        className="gap-1"
                         >
-                        <Search className={`h-4 w-4 mr-2 ${isDarkMode ? 'text-white' : 'text-black'}`}/>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="15px" viewBox="0 -960 960 960" width="15px" fill="#5f6368"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
                         Search
                     </Button>
                     </DialogTrigger>

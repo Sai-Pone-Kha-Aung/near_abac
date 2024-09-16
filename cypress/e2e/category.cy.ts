@@ -1,6 +1,6 @@
 describe('Category Page', () => {
   beforeEach(() => {
-    cy.intercept('GET', 'http://localhost:3000/api/postData?range=Sheet1!A1%3AK', {
+    cy.intercept('GET', 'http://localhost:3000/api/postData?range=Sheet1!A1%3AM', {
       statusCode: 200,
       fixture: 'postdata',
     }).as('getPostData');

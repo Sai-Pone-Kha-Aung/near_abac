@@ -4,7 +4,9 @@ export type Card = {
     category: string;
     address: string;
     phone: string;
-    url: string;
+    line_id: string;
+    facebook: string;
+    instagram: string;
     hours: string;
     image: string;
 }
@@ -16,7 +18,9 @@ export type SingleItem = {
     desc: string;
     address: string;
     phone: string;
-    url: string;
+    line_id: string;
+    facebook: string;
+    instagram: string;
     hours: string;
     image: string;
     latitude: number;
@@ -30,7 +34,9 @@ export interface sheetsData {
     desc: string;
     address: string;
     phone: string;
-    url: string;
+    line_id: string;
+    facebook: string;
+    instagram: string;
     hours: string;
     image: string;
     latitude: number;
