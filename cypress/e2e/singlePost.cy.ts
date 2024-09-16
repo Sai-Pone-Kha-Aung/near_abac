@@ -14,7 +14,6 @@ describe('Single Post Page', () => {
         cy.get('[data-testid="single-post-image"]').should('have.length', 1);
         cy.get('[data-testid="single-post-name"]').should('be.visible');
         cy.get('[data-testid="single-post-category"]').should('be.visible');
-        cy.get('[data-testid="single-post-desc"]').should('be.visible');
         cy.get('[data-testid="single-post-address"]').should('be.visible');
         cy.get('[data-testid="single-post-phone"]').should('be.visible');
         cy.get('[data-testid="single-post-url"]').should('be.visible');

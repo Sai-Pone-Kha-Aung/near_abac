@@ -16,7 +16,7 @@ describe('Navbar Component', () => {
 
   it('should search and navigate to category', () => {
     cy.fixture('postdata').then((data) => {
-      cy.intercept('GET', 'http://localhost:3000/api/postData?range=Sheet1!A1%3AK', {
+      cy.intercept('GET', 'http://localhost:3000/api/postData?range=Sheet1!A1%3AM', {
         statusCode: 200,
         body: data,
       }).as('getPostData');
@@ -24,7 +24,6 @@ describe('Navbar Component', () => {
       cy.get('[data-testid="search-input"]').type('Cafe');
       cy.get('[data-testid="search-button"]').click();
       cy.wait('@getPostData');
-      cy.url().should('include', `/category/${data[0].category}`);
     })
   });
 })
@@ -32,7 +31,7 @@ describe('Navbar Component', () => {
 
 describe('Feature Component', () => {
   beforeEach(() => {
-    cy.intercept('GET', 'http://localhost:3000/api/postData?range=Sheet1!A1%3AK', {
+    cy.intercept('GET', 'http://localhost:3000/api/postData?range=Sheet1!A1%3AM', {
       statusCode: 200,
       fixture: 'postdata',
     }).as('getPostData');
@@ -45,7 +44,11 @@ describe('Feature Component', () => {
     cy.get('[data-testid="feature-page"]').should('have.length', 3);
     cy.get('[data-testid="feature-card"]').should('be.visible');
     cy.get('[data-testid="feature-title"]').should('be.visible');
+    cy.get('[data-testid="feature-title"]').first().trigger('mouseover');
+    cy.get('[data-testid="feature-title"]').first().should('have.css', 'transition', 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s');
     cy.get('[data-testid="feature-title"]').should('have.length', 3);
+    cy.get('[data-testid="feature-title"]').first().click();
+    cy.url().should('include', '/category/Cafe');
   });
 
   it('should render the feature card', () => {

@@ -13,19 +13,17 @@ const transformData = (data: any[][]): sheetsData[] => {
             id: Number(obj['id']),
             name: obj['name'],
             category: obj['category'],
-            desc: obj['desc'],
             address: obj['address'],
             phone: obj['phone'],
-            url: obj['url'],
-            hours: obj['hours'],
-            image: obj['image'],
-            latitude: obj['latitude'] === '-' ? 0 : Number(obj['latitude']),
-            longitude: obj['longitude'] === '-' ? 0 : Number(obj['longitude']),
+            line_id: obj['line'],
+            facebook: obj['facebook'],
+            instagram: obj['instagram'],
+            image: obj['img'],
         } as sheetsData;
     });
 };
 
-export const  getData = async (range: string) => {
+const getData = async (range: string) => {
     const auth = await google.auth.getClient({
         credentials:{
             client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
@@ -48,7 +46,7 @@ export const  getData = async (range: string) => {
     }
 }
 export const GET = async (req: Request) => {
-    const range = 'Sheet1!A1:K';
+    const range = 'Sheet1!A1:I';
     const data = await getData(range);
     return new Response(JSON.stringify(data), {
         headers: { 'Content-Type': 'application/json' },
