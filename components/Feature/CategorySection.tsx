@@ -14,7 +14,7 @@ const CategorySection = ({ category, items, router }: CategorySectionProps) => (
     <div className='bg-background/50 backdrop-blur-md rounded-lg shadow-lg' data-testid="feature-page">
         <div className='pl-6 pt-6'>
             <h2
-                className='text-xl font-bold mb-2 cursor-pointer hover:text-2xl transition-all duration-300 ease-in-out'
+                className='text-2xl font-bold mb-2 cursor-pointer hover:text-3xl transition-all duration-300 ease-in-out'
                 data-testid="feature-title"
                 onClick={() => router.push(`/category/${category}`)}
             >
@@ -23,7 +23,7 @@ const CategorySection = ({ category, items, router }: CategorySectionProps) => (
         </div>
         <div className='flex flex-row gap-4 m-4 overflow-x-auto'>
             {items.slice(0, 4).map((item, index) => (
-                <div key={index}  className='flex-shrink-0 pb-4' data-testid="feature-card">
+                <div key={index} className='flex-shrink-0 pb-4' data-testid="feature-card">
                     <Card {...item} />
                 </div>
             ))}
