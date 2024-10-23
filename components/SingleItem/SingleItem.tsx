@@ -9,7 +9,7 @@ const SingleItem = (SingleItem: Item) => {
 
   const router = useRouter();
   return (
-    <div>
+    <div className='px-4 md:px-0'>
       <div className='bg-background/80 backdrop-blur-md rounded-lg shadow-lg'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8 p-8 text-neutral-700 md:px-6' data-testid="single-post">
           <div className='flex justify-center items-center overflow-hidden rounded-2xl h-full' data-testid="single-post-image">
