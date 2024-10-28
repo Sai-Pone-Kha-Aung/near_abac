@@ -12,7 +12,7 @@ interface CategorySectionProps {
 
 const CategorySection = ({ category, items, router }: CategorySectionProps) => (
     <div className='bg-background/50 backdrop-blur-md rounded-lg shadow-lg' data-testid="feature-page">
-        <div className='pl-6 pt-6'>
+        <div className='flex justify-between pl-6 pt-6'>
             <h2
                 className='text-2xl font-bold mb-2 cursor-pointer hover:text-3xl transition-all duration-300 ease-in-out'
                 data-testid="feature-title"
@@ -20,6 +20,9 @@ const CategorySection = ({ category, items, router }: CategorySectionProps) => (
             >
                 {category}
             </h2>
+            <Button className='flex justify-center items-center rounded-sm mr-4' variant={'outline'} data-testid="feature-view-all">
+                <Link rel='noopener noreferrer' href={`/category/${category}`}>View All</Link>
+            </Button>
         </div>
         <div className='flex flex-row gap-4 m-4 overflow-x-auto'>
             {items.slice(0, 4).map((item, index) => (
@@ -27,13 +30,6 @@ const CategorySection = ({ category, items, router }: CategorySectionProps) => (
                     <Card {...item} />
                 </div>
             ))}
-            {items.length > 4 && (
-                <div className='flex justify-center items-center'>
-                    <Button className='flex justify-center items-center rounded-xl' variant={'outline'} data-testid="feature-view-all">
-                        <Link rel='noopener noreferrer' href={`/category/${category}`}>View All</Link>
-                    </Button>
-                </div>
-            )}
         </div>
     </div>
 );
