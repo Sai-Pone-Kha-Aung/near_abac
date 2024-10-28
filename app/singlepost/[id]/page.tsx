@@ -25,7 +25,7 @@ const SinglePost = ({ params }: { params: { id: number } }) => {
   }
 
   return (
-    <div className='container min-h-screen mx-auto flex flex-col items-center justify-center'>
+    <div className='container h-[calc(100vh-80px)] mx-auto flex flex-col items-center justify-center overflow-auto'>
       <Suspense fallback={<SkeletonCard count={1} className='h-screen' />}>
         <SingleItem {...postDetail!} />
       </Suspense>

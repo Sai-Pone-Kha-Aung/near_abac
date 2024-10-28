@@ -37,13 +37,17 @@ const SingleItem = (SingleItem: Item) => {
                 <PhoneIcon />
                 {memoizedProps?.phone}
               </p>}
-              <Link href={`https://${memoizedProps?.instagram}`} target='_blank' rel="noopener noreferrer" className='flex justify-start items-center underline hover:text-blue-500 gap-2' data-testid="single-post-url">
+              {memoizedProps?.instagram && <Link href={`https://${memoizedProps?.instagram}`} target='_blank' rel="noopener noreferrer" className='flex justify-start items-center underline hover:text-blue-500 gap-2' data-testid="single-post-url">
                 <LinkIcon />
                 {memoizedProps?.instagram}
-              </Link>
+              </Link>}
               {memoizedProps?.facebook && <Link href={`https://${memoizedProps?.facebook}`} target='_blank' rel="noopener noreferrer" className='flex justify-start items-center underline hover:text-blue-500 gap-2' data-testid="single-post-url">
                 <LinkIcon />
                 {memoizedProps?.facebook}
+              </Link>}
+              {memoizedProps?.google_map_link && <Link href={`https://${memoizedProps?.google_map_link}`} target='_blank' rel="noopener noreferrer" className='flex justify-start items-center underline hover:text-blue-500 gap-2' data-testid="single-post-url">
+                <LinkIcon />
+                {memoizedProps?.google_map_link}
               </Link>}
               {memoizedProps?.line_id && <span className='flex justify-start items-center hover:text-blue-500 gap-2' data-testid="single-post-url">
                 <LineIcon />

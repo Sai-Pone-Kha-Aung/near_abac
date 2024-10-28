@@ -12,6 +12,7 @@ const Card = (Card: CardType) => {
     const handleClick = useCallback(() => {
         router.push(`/singlepost/${Card.id}`);
     }, [Card.id, router]);
+
     return (
         <div className='flex flex-col rounded-2xl w-[320px] sm:w-96 bg-[#ffffff] shadow-lg hover:shadow-xl transition-shadow duration-300 h-[550px] sm:h-[620px]' data-testid="card">
             <div className='flex justify-center items-center h-[250px] sm:h-[300px] overflow-hidden rounded-t-2xl ' data-testid="card-image">
@@ -31,6 +32,10 @@ const Card = (Card: CardType) => {
                         {Card.instagram && <Link href={`https://${Card.instagram}`} target='_blank' rel="preconnect noopener noreferrer" className='flex justify-start items-center hover:underline hover:text-blue-500 cursor-pointer break-all gap-2' data-testid="card-url">
                             <LinkIcon />
                             {Card.instagram}
+                        </Link>}
+                        {Card.google_map_link && <Link href={`https://${Card.google_map_link}`} target='_blank' rel="preconnect noopener noreferrer" className='flex justify-start items-center hover:underline hover:text-blue-500 cursor-pointer break-all gap-2' data-testid="card-url">
+                            <LinkIcon />
+                            {Card.google_map_link}
                         </Link>}
                     </div>
                 </div>
