@@ -13,12 +13,20 @@ const SingleItem = (SingleItem: Item) => {
       <div className='bg-background/80 backdrop-blur-md rounded-lg shadow-lg'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8 p-8 text-neutral-700 md:px-6' data-testid="single-post">
           <div className='flex justify-center items-center overflow-hidden rounded-2xl h-full' data-testid="single-post-image">
-            <CustomImage
+            {memoizedProps?.image ? (<CustomImage
               path={memoizedProps?.image!}
               alt={memoizedProps?.image!}
               width={400}
               height={300}
-            />
+            />) : (
+              <CustomImage
+                path={'/default.png'}
+                alt={memoizedProps?.image!}
+                width={400}
+                height={300}
+                className='object-cover'
+              />
+            )}
           </div>
           <div>
             <h1 className='text-2xl font-bold text-neutral-900' data-testid="single-post-name">{memoizedProps?.name}</h1>

@@ -5,6 +5,7 @@ import CustomImage from '@/components/CustomImage'
 import { Link } from 'next-view-transitions'
 import { LinkIcon } from '@/public/Icon'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 const Card = (Card: CardType) => {
     const router = useRouter();
@@ -16,12 +17,20 @@ const Card = (Card: CardType) => {
     return (
         <div className='flex flex-col rounded-2xl w-[320px] sm:w-96 bg-[#ffffff] shadow-lg hover:shadow-xl transition-shadow duration-300 h-[550px] sm:h-[620px]' data-testid="card">
             <div className='flex justify-center items-center h-[250px] sm:h-[300px] overflow-hidden rounded-t-2xl ' data-testid="card-image">
-                <CustomImage
+                {Card.image ? (<CustomImage
                     path={Card.image}
                     alt={Card.name}
                     width={384}
                     height={300}
-                />
+                />) : (
+                    <CustomImage
+                        path={'/default.png'}
+                        alt={Card.name}
+                        width={384}
+                        height={300}
+                        className='object-cover'
+                    />
+                )}
             </div>
             <h1 className='p-6 text-2xl font-bold text-neutral-900' data-testid="card-name">
                 {Card.name}

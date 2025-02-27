@@ -20,7 +20,7 @@ const CategorySection = ({ category, items, router }: CategorySectionProps) => (
             >
                 {category}
             </h2>
-            <Button className='flex justify-center items-center rounded-sm mr-4' variant={'outline'} data-testid="feature-view-all">
+            <Button className='flex justify-center items-center rounded-md mr-4' variant={'outline'} data-testid="feature-view-all">
                 <Link rel='noopener noreferrer' href={`/category/${category}`}>View All</Link>
             </Button>
         </div>
