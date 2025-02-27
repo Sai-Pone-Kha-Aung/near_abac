@@ -46,10 +46,14 @@ const getData = async (range: string) => {
     return [];
   }
 };
+
 export const GET = async (req: Request) => {
   const range = "Sheet1!A1:J";
   const data = await getData(range);
   return new Response(JSON.stringify(data), {
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store, max-age=0, ",
+    },
   });
 };
