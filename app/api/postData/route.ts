@@ -53,7 +53,9 @@ export const GET = async (req: Request) => {
   return new Response(JSON.stringify(data), {
     headers: {
       "Content-Type": "application/json",
-      "Cache-Control": "no-store, max-age=0, ",
+      "Cache-Control": "no-store, max-age=0",
+      Pragma: "no-cache",
+      Expires: "0",
     },
   });
 };
