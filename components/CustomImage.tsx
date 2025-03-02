@@ -10,8 +10,9 @@ interface ICustomImageProps {
     width: number;
     height: number;
     className?: string;
+    priority?: boolean;
 }
-const CustomImage = ({ path, alt, width, height, className }: ICustomImageProps) => {
+const CustomImage = ({ path, alt, width, height, className, priority }: ICustomImageProps) => {
     if (!urlEndpoint) {
         console.error("Missing urlEndpoint during initialization");
         return null;
@@ -24,7 +25,9 @@ const CustomImage = ({ path, alt, width, height, className }: ICustomImageProps)
         width={width}
         height={height}
         className={className}
-        loading='lazy' />
+        loading='lazy'
+        priority={priority}
+    />
 }
 
 export default CustomImage
