@@ -12,17 +12,20 @@ const Hero = () => {
             <div className='absolute inset-0 z-0'>
                 <div className='absolute inset-0 bg-black/35 z-10'>
                 </div>
-                <img
+                <Image
                     src='/hero_img/IMG_3372.JPG'
                     alt='hero image'
                     onLoad={() => setIsLoaded(true)}
                     className={`w-full h-full object-cover backdrop:blur-sm`}
+                    width={1920}
+                    height={1080}
+                    priority
                 />
             </div>
 
             <div className='flex flex-col items-center justify-center text-center mt-10 relative z-20 mx-auto h-full container px-4'>
                 <div>
-                    <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 text-gray-200'>Discover What's <span className='text-near-purple-light'>NEAR ABAC</span></h1>
+                    <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 text-gray-200'>Discover What&apos;s <span className='text-near-purple-light'>NEAR ABAC</span></h1>
                     <p className='text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8 text-gray-700'>Find the best apartments, restaurants, cafes and more around Assumption University</p>
                 </div>
                 {/* <div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Listing } from '@/types/types'
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils'
 
 interface ListingCardProps {
@@ -18,11 +19,15 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
             opacity: 0,
         }}>
             <div className='relative aspect-[4/3] overflow-hidden'>
-                <img
+                <Image
                     src={listing.imageUrl}
                     alt={listing.title}
                     className={cn('w-full h-full object-cover transition-opacity duration-500')}
-                    onLoad={() => setImageLoaded(true)} />
+                    onLoad={() => setImageLoaded(true)}
+                    width={1920}
+                    height={1080}
+                    priority
+                />
 
                 <div className='absolute top-3 left-3'>
                     <span className='bg-near-purple/90 backdrop-blur-sm text-white text-xs p-2 rounded-full'>
