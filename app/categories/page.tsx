@@ -18,7 +18,7 @@ const categories: Category[] = [
 ];
 
 
-const page = () => {
+const Page = () => {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
     return (
@@ -118,4 +118,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

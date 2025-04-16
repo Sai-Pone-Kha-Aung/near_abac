@@ -11,7 +11,7 @@ import ListingCard from '@/components/Landing/components/ListingCard'
 import { listings } from '@/constant/data'
 import { Button } from '@/components/ui/button'
 
-const page = () => {
+const Page = () => {
   const slug = useParams().slug
   const category = categories.find(cat => cat.type === slug)
 
@@ -106,4 +106,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
