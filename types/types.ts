@@ -61,3 +61,11 @@ export interface Listing {
   description?: string;
   distance?: string;
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  type: CategoryType;
+  icon: string;
+  count: number;
+}

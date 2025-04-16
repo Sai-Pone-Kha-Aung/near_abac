@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Building, Cake, Camera, ChevronRight, Coffee, Home, ShoppingBag, Utensils } from 'lucide-react'
 import { CategoryType } from '@/types/types';
 import { cn } from '@/lib/utils';
+import { Category } from '@/types/types';
 
 const categories: Category[] = [
     { id: '1', name: 'Apartments', type: 'apartment', icon: 'building', count: 24 },
@@ -13,13 +14,6 @@ const categories: Category[] = [
     { id: '6', name: 'Shopping', type: 'shopping', icon: 'shopping-bag', count: 28 },
     { id: '7', name: 'Entertainment', type: 'entertainment', icon: 'camera', count: 12 },
 ];
-interface Category {
-    id: string;
-    name: string;
-    type: CategoryType;
-    icon: string;
-    count: number;
-}
 
 interface CategoryIconProps {
     type: CategoryType;
