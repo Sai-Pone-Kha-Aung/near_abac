@@ -47,7 +47,7 @@ const Navbar = () => {
               </li>
               {user && (
                 <li>
-                  <Link href="#map" className="text-gray-700 hover:text-near-purple smooth-transition">Add Listing</Link>
+                  <Link href="/add-listing" className="text-gray-700 hover:text-near-purple smooth-transition">Add Listing</Link>
                 </li>
               )}
             </ul>
@@ -74,15 +74,17 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   {user.role === "admin" && (
                     <DropdownMenuItem asChild>
-                      <Link href="/admin">Admin Dashboard</Link>
+                      <Link href="/admin/dashboard">Admin Dashboard</Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild>
-                    <Link href="/profile">Add Listing</Link>
+                    <Link href="/add-listing">Add Listing</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile">My Profile</Link>
-                  </DropdownMenuItem>
+                  {user.role === "user" && (
+                    <DropdownMenuItem asChild>
+                      <Link href={`/profile/1`}>My Profile</Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/">Logout</Link>

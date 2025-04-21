@@ -1,8 +1,7 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Filter, Search } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { CategoryIcon } from '@/components/Landing/components/Categories'
 import { useParams } from 'next/navigation'
 import { categories } from '@/components/Landing/components/Categories'
@@ -14,6 +13,15 @@ import { Button } from '@/components/ui/button'
 const Page = () => {
   const slug = useParams().slug
   const category = categories.find(cat => cat.type === slug)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   const filteredCategories = listings.filter(listing => listing.type === slug).map(listing => ({
     id: listing.id,
