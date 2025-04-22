@@ -46,7 +46,7 @@ const userData = [
     { id: 3, name: 'Alice Johnson', email: 'alicejohnson@example.com' },
 ]
 
-export const overview_card: OverviewCardProps[] = [
+const overview_card: OverviewCardProps[] = [
     {
         title: "Total Listings",
         subtitle: "All Categories",
