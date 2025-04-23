@@ -15,7 +15,7 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const router = useRouter();
     return (
-        <Link href={`/listing/${listing.id}`} className='card-hover rounded-xl overflow-hidden bg-white shadow-md block' style={{
+        <div onClick={() => router.push(`/listing/${listing.id}`)} className='card-hover rounded-xl overflow-hidden bg-white shadow-md block' style={{
             animationDelay: `${index * 0.1}s`,
             animation: 'fade-in 0.5s ease-in-out forwards',
             opacity: 0,
@@ -58,7 +58,7 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
                 </div>
             </div>
 
-        </Link>
+        </div>
     )
 }
 
