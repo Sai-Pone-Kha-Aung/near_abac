@@ -1,5 +1,4 @@
-"use client"
-//import Link from 'next/link'
+"use client";
 import { useEffect, useState } from 'react'
 import Mobile from './Mobile'
 import SearchDialog from '../Search/SearchDialog'
@@ -7,13 +6,14 @@ import { Link } from 'next-view-transitions'
 import { Button } from '../ui/button'
 import { MapPin, User } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
+import { SignOutButton, useAuth, useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 
 
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);
-  const user: { role: "user" | "admin" } = {
-    role: "admin"
-  };
+  const { user } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -66,43 +66,42 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='rounded-lg align-end' >
                   <div className='px-2 py-1.5 text-sm font-medium text-gray-900'>
-                    Username
+                    {user?.firstName} {user?.lastName}
                   </div>
                   <div className='px-2 py-1.5 text-xs text-gray-500'>
-                    email@example.com
+                    {user?.emailAddresses[0]?.emailAddress}
                   </div>
                   <DropdownMenuSeparator />
-                  {user.role === "admin" && (
+                  {user?.publicMetadata.role === "admin" && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin/dashboard">Admin Dashboard</Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem asChild>
-                    <Link href="/add-listing">Add Listing</Link>
-                  </DropdownMenuItem>
-                  {user.role === "user" && (
+                  {user?.publicMetadata.role === "moderator" && (
                     <DropdownMenuItem asChild>
                       <Link href={`/profile/1`}>My Profile</Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/">Logout</Link>
+                    <SignOutButton>
+                      <Link href="/">Log Out</Link>
+                    </SignOutButton>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (<>
-              <Button variant="ghost" className="text-gray-700 hover:text-near-purple cursor-pointer smooth-transition rounded-lg">
-                Login
+              <Button onClick={() => router.push('/sign-in')} variant="ghost" className="text-gray-700 hover:text-near-purple cursor-pointer smooth-transition rounded-lg">
+                Log In
               </Button>
-              <Button variant="ghost" className="text-gray-100 bg-[#7928ca] hover:bg-[#7928ca]/90 rounded-lg">
+              <Button onClick={() => router.push('/sign-up')} variant="ghost" className="text-gray-100 bg-[#7928ca] hover:bg-[#7928ca]/90 rounded-lg">
                 Sign Up
               </Button>
             </>
             )}
           </div>
           <div className="md:hidden flex items-center gap-4">
-            <Mobile user={user} />
+            <Mobile />
           </div>
         </div>
       </div>

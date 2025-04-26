@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import SearchDialog from '../Search/SearchDialog'
+import { SignInButton, SignOutButton, SignUpButton, useUser } from '@clerk/nextjs'
 
-const Mobile = ({ user }: { user: { role: "user" | "admin" } }) => {
+const Mobile = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false);
+  const { user } = useUser();
 
   return (
     <div>
@@ -29,7 +31,7 @@ const Mobile = ({ user }: { user: { role: "user" | "admin" } }) => {
           </div>
           {user ? (
             <>
-              {user.role === "admin" && (
+              {user.publicMetadata.role === "admin" && (
                 <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
                   <Link href="/admin" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Admin Dashboard</Link>
                 </div>
@@ -37,20 +39,25 @@ const Mobile = ({ user }: { user: { role: "user" | "admin" } }) => {
               <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
                 <Link href="/add-listing" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Add Listing</Link>
               </div>
-              <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
+              {user.publicMetadata.role === "moderator" && (<div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
                 <Link href="/profile" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>My Profile</Link>
-              </div>
+              </div>)}
               <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
-                <Link href="/" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Logout</Link>
+                <SignOutButton>
+
+                  <Link href="/" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Log Out</Link>
+                </SignOutButton>
               </div>
             </>
           ) : (
             <>
               <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
-                <Link href="/login" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Login</Link>
+                <SignInButton>
+                  <Link href="/sign-in" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Login</Link>
+                </SignInButton>
               </div>
               <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
-                <Link href="/signup" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Sign Up</Link>
+                <Link href="/sign-up" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Sign Up</Link>
               </div>
             </>
           )}
