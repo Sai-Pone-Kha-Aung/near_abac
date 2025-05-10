@@ -30,19 +30,17 @@ const getSheetsData = (pollingInterval = 60000) => {
     }
   };
 
-  // Initial data fetch
   useEffect(() => {
     fetchData();
   }, [range]);
 
-  // Setup polling
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchData();
-    }, pollingInterval);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     fetchData();
+  //   }, pollingInterval);
 
-    return () => clearInterval(intervalId);
-  }, [range, pollingInterval]);
+  //   return () => clearInterval(intervalId);
+  // }, [range, pollingInterval]);
 
   // Manual refresh function
   const refreshData = async () => {

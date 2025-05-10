@@ -4,9 +4,16 @@ import { useEffect, useState } from 'react'
 import Mobile from './Mobile'
 import SearchDialog from '../Search/SearchDialog'
 import { Link } from 'next-view-transitions'
+import { Button } from '../ui/button'
+import { MapPin, User } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
+
 
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);
+  const user: { role: "user" | "admin" } = {
+    role: "admin"
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -17,29 +24,87 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 text-black backdrop-blur-md">
-      <div className="container flex md:flex-row justify-between h-20 p-4 md:px-6 mx-auto  text-black items-center">
-        <div className="flex md:flex-row gap-6 text-lg font-medium justify-between md:items-center md:justify-between w-full">
-          <Link href="/" className="text-lg font-semibold">
-            <span className="flex text-2xl items-center gap-2 hover:text-3xl transition-all duration-300 ease-in-out cursor-pointer font-bold" data-testid="navbar-title">
-              <svg xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#5f6368"><path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"
-              />
-              </svg>
-              NEAR ABAC
-            </span>
+
+    <header className="sticky top-0 z-50 w-full bg-background/80 text-black backdrop-blur-md px-4 py-4 shadow-sm">
+      <div className='container mx-auto'>
+        <div className='flex justify-between items-center'>
+          {/* LOGO */}
+          <Link href="/" className="flex items-center gap-1 text-2xl font-bold text-gray-900">
+            <MapPin className="h-6 w-6 text-near-purple" />
+            <span>NEAR ABAC</span>
           </Link>
-          <div className="flex items-center gap-6 md:ml-auto justify-center md:justify-start">
-            {/* Add other links here if needed */}
+          {/* Nav */}
+          <nav className='hidden md:flex items-center space-x-8'>
+            <ul className="flex items-center gap-8 text-lg">
+              <li>
+                <Link href="/categories" className="text-gray-700 hover:text-near-purple smooth-transition ">Categories</Link>
+              </li>
+              <li>
+                <Link href="#featured" className="text-gray-700 hover:text-near-purple smooth-transition">Featured</Link>
+              </li>
+              <li>
+                <Link href="#map" className="text-gray-700 hover:text-near-purple smooth-transition">Map</Link>
+              </li>
+              {user && (
+                <li>
+                  <Link href="#map" className="text-gray-700 hover:text-near-purple smooth-transition">Add Listing</Link>
+                </li>
+              )}
+            </ul>
+          </nav>
+          {/* Search */}
+          <div className="hidden md:inline-flex relative">
+            <SearchDialog onClose={() => { }} isDialogOpen={false} className='flex gap-2 w-[300px] text-gray-500 justify-start rounded-full' />
           </div>
-          <div className="sm:hidden flex items-center gap-4 md:ml-auto md:justify-end">
-            <Mobile />
+          <div className='hidden md:flex items-center ml-4 space-x-6'>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='outline' className='rounded-full h-10 w-10 p-2'>
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className='rounded-lg align-end' >
+                  <div className='px-2 py-1.5 text-sm font-medium text-gray-900'>
+                    Username
+                  </div>
+                  <div className='px-2 py-1.5 text-xs text-gray-500'>
+                    email@example.com
+                  </div>
+                  <DropdownMenuSeparator />
+                  {user.role === "admin" && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin">Admin Dashboard</Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Add Listing</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">My Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/">Logout</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (<>
+              <Button variant="ghost" className="text-gray-700 hover:text-near-purple cursor-pointer smooth-transition rounded-lg">
+                Login
+              </Button>
+              <Button variant="ghost" className="text-gray-100 bg-[#7928ca] hover:bg-[#7928ca]/90 rounded-lg">
+                Sign Up
+              </Button>
+            </>
+            )}
           </div>
-          <div className="hidden md:inline-flex">
-            <SearchDialog onClose={() => { }} isDialogOpen={false} />
+          <div className="md:hidden flex items-center gap-4">
+            <Mobile user={user} />
           </div>
         </div>
       </div>
-    </nav>
+    </header>
   )
 }
 

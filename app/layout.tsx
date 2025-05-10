@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
 import { ViewTransitions } from "next-view-transitions";
 import "./globals.css";
 
@@ -35,8 +36,9 @@ export default function RootLayout({
           fontHeading.variable,
           fontBody.variable
         )}>
-            <Navbar/>
-            {children}
+          <Navbar />
+          {children}
+          <Footer />
         </body>
       </html>
     </ViewTransitions>
