@@ -1,6 +1,7 @@
 [x] Navbar dropdown menu
-[] categories page
-[] categories/name page
+[x] categories page
+[x] categories/name page
 [] list_detail page
+[] add listing page
 [] admin page
 [] auth
