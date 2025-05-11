@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button';
-import { Ghost, MapPin } from 'lucide-react';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 const Map = () => {
@@ -28,6 +26,20 @@ const Map = () => {
             }
         };
     }, [])
+
+    const handleFindNearbyPlaces = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+            }, (error) => {
+                console.error('Error getting location:', error);
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    }
 
     return (
         <section id="map" className='py-16 md:py-20 bg-white'>
@@ -77,7 +89,7 @@ const Map = () => {
 
                 </div>
                 <div className={cn('flex justify-center gap-4 mt-8 transition-all duration-500 transform', isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')}>
-                    <Button className='bg-near-purple hover:bg-near-purple-dark text-white px-6 py-3 rounded-full transition-colors shadow-md'>Find Nearby Places</Button>
+                    <Button className='bg-near-purple hover:bg-near-purple-dark text-white px-6 py-3 rounded-full transition-colors shadow-md' onClick={handleFindNearbyPlaces}>Find Nearby Places</Button>
                     <Button className='text-near-purple rounded-full bg-white border border-near-purple hover:bg-near-purple/5 px-6 py-3 shadow-sm transition-colors'>View on Google Maps</Button>
                 </div>
             </div >

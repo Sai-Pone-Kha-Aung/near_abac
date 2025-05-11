@@ -8,6 +8,7 @@ import { MapPin, User } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
 import { SignOutButton, useAuth, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 
 const Navbar = () => {
@@ -56,12 +57,19 @@ const Navbar = () => {
           <div className="hidden md:inline-flex relative">
             <SearchDialog onClose={() => { }} isDialogOpen={false} className='flex gap-2 w-[300px] text-gray-500 justify-start rounded-full' />
           </div>
+
           <div className='hidden md:flex items-center ml-4 space-x-6'>
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant='outline' className='rounded-full h-10 w-10 p-2' aria-label="User menu">
-                    <User className="h-5 w-5" />
+                  <Button variant='outline' className='rounded-full h-10 w-10 p-0' aria-label="User menu">
+                    <Image
+                      src={user?.imageUrl}
+                      alt="User Avatar"
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='rounded-lg align-end' >
@@ -77,9 +85,9 @@ const Navbar = () => {
                       <Link href="/admin/dashboard">Admin Dashboard</Link>
                     </DropdownMenuItem>
                   )}
-                  {user?.publicMetadata.role === "moderator" && (
+                  {(user?.publicMetadata.role === "moderator" || user?.publicMetadata.role === "") && (
                     <DropdownMenuItem asChild>
-                      <Link href={`/profile/1`}>My Profile</Link>
+                      <Link href={`/profile/${user.id}`}>My Profile</Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />

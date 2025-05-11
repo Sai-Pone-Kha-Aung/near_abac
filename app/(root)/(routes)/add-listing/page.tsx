@@ -8,6 +8,7 @@ import { z, ZodType } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import Image from 'next/image'
 
 type FormData = {
     title: string;
@@ -144,10 +145,12 @@ const Page = () => {
                             >
                                 {selectedImage ? (
                                     <>
-                                        <img
+                                        <Image
                                             src={URL.createObjectURL(selectedImage)}
+                                            width={128}
+                                            height={128}
                                             alt="Selected"
-                                            className='w-32 h-32 object-cover rounded-lg mb-2'
+                                            className='object-cover rounded-lg mb-2'
                                         />
                                         <p className="text-sm text-gray-500">Selected: {selectedImage.name}</p>
                                         <p className="text-xs text-gray-400 mt-1">

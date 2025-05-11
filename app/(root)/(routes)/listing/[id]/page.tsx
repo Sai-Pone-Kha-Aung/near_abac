@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button'
 import { CategoryIcon } from '@/components/Landing/components/Categories'
 import { listings } from '@/constant/data'
 import { Listing } from '@/types/types'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import GoogleMapComponent from '@/components/Map-Modal'
+import MapModal from '@/components/Map-Modal'
 
 const Page = () => {
     const { id } = useParams();
@@ -87,6 +89,25 @@ const Page = () => {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className='relative mt-12 rounded-xl overflow-hidden shadow-lg h-[400px] md:h-[500px] lg:h-[600px] transition-all duration-700 transform'>
+                        <h2 className='text-2xl font-bold my-6'>{listing?.title} Location</h2>
+                        <div className='absolute inset-0 bg-near-gray-dark'>
+                            <iframe
+                                src={listing?.mapEmbed}
+                                width="100%"
+                                height="100%"
+                                style={{ border: 0 }}
+                                allowFullScreen
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                            {/* <MapModal
+                                open={false}
+                                onOpenChange={() => { }}
+                            /> */}
                         </div>
                     </div>
 

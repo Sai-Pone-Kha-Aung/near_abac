@@ -6,10 +6,16 @@ const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 const isAuthRoute = createRouteMatcher(["/profile(.*)"]);
 
-export default clerkMiddleware(async (auth, req) => {
-  const { userId, redirectToSignIn } = await auth();
+type UserMetadata = {
+  role: string;
+};
 
-  if (isAdminRoute(req) && (await auth()).sessionClaims?.role !== "admin") {
+export default clerkMiddleware(async (auth, req) => {
+  const { userId, redirectToSignIn, sessionClaims } = await auth();
+
+  const { role } = (sessionClaims?.metadata as UserMetadata) || { role: "" };
+
+  if (isAdminRoute(req) && role !== "admin") {
     const url = new URL("/", req.url);
     return NextResponse.redirect(url);
   }
