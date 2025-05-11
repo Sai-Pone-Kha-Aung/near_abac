@@ -7,11 +7,12 @@
 [x] add listing form
 [x] zod validation
 [x] admin page
-[] auth
-[] story book
+[x] auth
+[] toast
 
 **Backend**
 
 [] Database migration
 [] setup database
 [] api CRUD
+[] migrate with clerk

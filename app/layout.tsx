@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { ViewTransitions } from "next-view-transitions";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const fontHeading = Inter({
@@ -29,18 +30,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ViewTransitions>
-      <html lang="en">
-        <body className={cn(
-          'antialiased',
-          fontHeading.variable,
-          fontBody.variable
-        )}>
-          <Navbar />
-          {children}
-          <Footer />
-        </body>
-      </html>
-    </ViewTransitions>
+    <ClerkProvider>
+      <ViewTransitions>
+        <html lang="en">
+          <body className={cn(
+            'antialiased',
+            fontHeading.variable,
+            fontBody.variable
+          )}>
+            <Navbar />
+            {children}
+            <Footer />
+          </body>
+        </html>
+      </ViewTransitions>
+    </ClerkProvider>
+
   );
 }
