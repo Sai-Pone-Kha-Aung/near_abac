@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Building, Cake, Camera, ChevronRight, Coffee, Home, ShoppingBag, Utensils } from 'lucide-react'

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Listing } from '@/types/types'
 import Link from 'next/link';
-import { ExternalLink } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils'
+import { Listing } from '@/types/types'
+import { ExternalLink } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface ListingCardProps {
     listing: Listing;
@@ -12,12 +13,15 @@ interface ListingCardProps {
 
 const ListingCard = ({ listing, index }: ListingCardProps) => {
     const [imageLoaded, setImageLoaded] = useState(false);
+    const router = useRouter();
     return (
-        <div className='card-hover rounded-xl overflow-hidden bg-white shadow-md block' style={{
+        <Link href={`/listing/${listing.id}`} className='card-hover rounded-xl overflow-hidden bg-white shadow-md block' style={{
             animationDelay: `${index * 0.1}s`,
             animation: 'fade-in 0.5s ease-in-out forwards',
             opacity: 0,
-        }}>
+        }}
+
+        >
             <div className='relative aspect-[4/3] overflow-hidden'>
                 <Image
                     src={listing.imageUrl}
@@ -54,7 +58,7 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
                 </div>
             </div>
 
-        </div>
+        </Link>
     )
 }
 
