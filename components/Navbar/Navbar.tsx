@@ -60,7 +60,7 @@ const Navbar = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant='outline' className='rounded-full h-10 w-10 p-2'>
+                  <Button variant='outline' className='rounded-full h-10 w-10 p-2' aria-label="User menu">
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>

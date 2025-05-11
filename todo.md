@@ -5,8 +5,8 @@
 [x] categories/name page
 [x] list_detail page
 [x] add listing form
-[] zod validation
-[] admin page
+[x] zod validation
+[x] admin page
 [] auth
 [] story book
 
