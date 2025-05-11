@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Category } from '@/types/types'
 import { CategoryIcon } from '@/components/Landing/components/Categories'
-
 const categories: Category[] = [
     { id: '1', name: 'Apartments', type: 'apartment', icon: 'building', count: 24 },
     { id: '2', name: 'Condos', type: 'condo', icon: 'home', count: 18 },

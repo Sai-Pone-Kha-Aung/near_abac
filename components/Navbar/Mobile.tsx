@@ -31,7 +31,7 @@ const Mobile = () => {
           </div>
           {user ? (
             <>
-              {user.publicMetadata.role === "admin" && (
+              {user?.publicMetadata.role === "admin" && (
                 <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
                   <Link href="/admin" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Admin Dashboard</Link>
                 </div>
@@ -39,8 +39,8 @@ const Mobile = () => {
               <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
                 <Link href="/add-listing" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>Add Listing</Link>
               </div>
-              {user.publicMetadata.role === "moderator" && (<div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
-                <Link href="/profile" onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>My Profile</Link>
+              {(user?.publicMetadata.role === "moderator" || user?.publicMetadata.role === "") && (<div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
+                <Link href={`profile/${user.id}`} onClick={() => setIsOpenMobileMenu(false)} className='text-lg font-medium text-gray-700 hover:text-near-purple smooth-transition border-b border-white w-full py-2'>My Profile</Link>
               </div>)}
               <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>
                 <SignOutButton>

@@ -1,14 +1,9 @@
 "use client"
-import React, { Suspense } from 'react'
+import React from 'react'
 import Head from 'next/head';
-import getSheetsData from '@/actions/getSheetsData';
-import { sheetsData } from '@/types/types';
-import Feature from '@/components/Feature/Feature';
 import LandingPage from '@/components/Landing/LandingPage';
 
 const HomePage = () => {
-  const { data, error } = getSheetsData();
-  const initialData = data as sheetsData[];
   return (
     <>
       <Head>

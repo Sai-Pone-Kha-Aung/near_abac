@@ -60,6 +60,7 @@ export interface Listing {
   mapUrl: string;
   description?: string;
   distance?: string;
+  mapEmbed?: string;
 }
 
 export interface Category {

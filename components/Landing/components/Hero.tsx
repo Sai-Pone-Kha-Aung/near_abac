@@ -3,9 +3,15 @@ import SearchDialog from '../../Search/SearchDialog'
 import Image from 'next/image'
 import { ArrowDown, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { useUser } from '@clerk/nextjs'
 
 const Hero = () => {
     const [isLoaded, setIsLoaded] = useState(false);
+    const user = useUser()
+    const isLoggedIn = user.isSignedIn
+
     return (
         <section className='flex flex-col items-center justify-center h-screen bg-gradient-to-b from-white to-gray-700 overflow-hidden relative w-full'>
             {/* image */}
@@ -37,7 +43,18 @@ const Hero = () => {
                         isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                     )}
                 >
-                    <div className="relative">
+
+                    <Button variant='default' className='bg-near-purple text-white hover:bg-near-purple-dark transition-colors'>
+                        {isLoggedIn ? (<Link href='/add-listing'>
+                            Add Your Place
+                        </Link>) : (
+                            <Link href='/sign-in'>
+                                Sign in to add your place
+                            </Link>
+                        )}
+                    </Button>
+
+                    {/* <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <Search className="h-5 w-5 text-gray-400" />
                         </div>
@@ -49,7 +66,7 @@ const Hero = () => {
                         <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-near-purple text-white px-5 py-2 rounded-full hover:bg-near-purple-dark transition-colors">
                             Search
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
