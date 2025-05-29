@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import SearchDialog from '../../Search/SearchDialog'
-import Image from 'next/image'
-import { ArrowDown, Search } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
+import CustomImage from '@/components/CustomImage'
 
 const Hero = () => {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -18,9 +17,9 @@ const Hero = () => {
             <div className='absolute inset-0 z-0'>
                 <div className='absolute inset-0 bg-black/35 z-10'>
                 </div>
-                <Image
-                    src='/hero_img/IMG_3372.JPG'
-                    alt='hero image'
+                <CustomImage
+                    src='heroimg.jpg'
+                    alt='heroimage'
                     onLoad={() => setIsLoaded(true)}
                     className={`w-full h-full object-cover backdrop:blur-sm`}
                     width={1920}
@@ -34,9 +33,6 @@ const Hero = () => {
                     <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 text-gray-200'>Discover What&apos;s <span className='text-near-purple-light'>NEAR ABAC</span></h1>
                     <p className='text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8 text-gray-700'>Find the best apartments, restaurants, cafes and more around Assumption University</p>
                 </div>
-                {/* <div>
-                    <SearchDialog isDialogOpen={false} onClose={() => { }} className='flex rounded-full w-[500px] text-center text-gray-500 justify-start' />
-                </div> */}
                 <div
                     className={cn(
                         "w-full max-w-2xl transition-all duration-700 delay-200 transform",
@@ -44,7 +40,7 @@ const Hero = () => {
                     )}
                 >
 
-                    <Button variant='default' className='bg-near-purple text-white hover:bg-near-purple-dark transition-colors'>
+                    <Button variant='default' className='bg-near-purple text-white hover:bg-near-purple-dark transition-colors w-[200px]'>
                         {isLoggedIn ? (<Link href='/add-listing'>
                             Add Your Place
                         </Link>) : (
@@ -53,20 +49,6 @@ const Hero = () => {
                             </Link>
                         )}
                     </Button>
-
-                    {/* <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <Search className="h-5 w-5 text-gray-400" />
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Search for apartments, restaurants, cafes..."
-                            className="w-full bg-white/90 backdrop-blur-sm py-4 pl-12 pr-4 rounded-full text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-near-purple shadow-lg"
-                        />
-                        <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-near-purple text-white px-5 py-2 rounded-full hover:bg-near-purple-dark transition-colors">
-                            Search
-                        </button>
-                    </div> */}
                 </div>
             </div>
 

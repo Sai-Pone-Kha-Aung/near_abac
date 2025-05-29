@@ -44,7 +44,7 @@ const FeatureSection = ({ listings, title, subtitle, type }: FeatureSectionProps
                         <h2 className='text-3xl md:text-4xl font-semibold my-2'>{title}</h2>
                         <p className='text-gray-600 max-w-2xl'>{subtitle}</p>
                     </div>
-                    <Link href="#" className={cn('flex items-center gap-2 text-near-purple hover:text-near-purple-dark hover:underline transition-colors mt-4 md:mt-0', isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10', 'transition-all duration-500 delay-200')}>
+                    <Link href={`/categories/${type}`} className={cn('flex items-center gap-2 text-near-purple hover:text-near-purple-dark hover:underline transition-colors mt-4 md:mt-0', isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10', 'transition-all duration-500 delay-200')}>
                         <span>
                             View All {title}
                         </span>

@@ -17,7 +17,7 @@ const Mobile = () => {
       {isOpenMobileMenu && (
         <div className='md:hidden absolute top-full left-0 right-0 bg-white shadow-lg py-6 px-4 glass-effect animate-fade-in'>
           <div>
-            <SearchDialog onClose={() => setIsOpenMobileMenu(false)} isDialogOpen={false} className='flex gap-2 w-full justify-start rounded-full' />
+            <SearchDialog onClose={() => setIsOpenMobileMenu(false)} className='flex gap-2 w-full justify-start rounded-full' />
           </div>
 
           <div className='flex items-center justify-between py-2 px-4 hover:bg-gray-100 rounded-lg transition-all duration-300 ease-in-out mt-2'>

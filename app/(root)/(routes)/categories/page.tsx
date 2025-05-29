@@ -1,25 +1,47 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Grid3X3, List } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { Category } from '@/types/types'
-import { CategoryIcon } from '@/components/Landing/components/Categories'
-const categories: Category[] = [
-    { id: '1', name: 'Apartments', type: 'apartment', icon: 'building', count: 24 },
-    { id: '2', name: 'Condos', type: 'condo', icon: 'home', count: 18 },
-    { id: '3', name: 'Restaurants', type: 'restaurant', icon: 'utensils', count: 42 },
-    { id: '4', name: 'Cafes', type: 'cafe', icon: 'coffee', count: 36 },
-    { id: '5', name: 'Bakeries', type: 'bakery', icon: 'cake', count: 15 },
-    { id: '6', name: 'Shopping', type: 'shopping', icon: 'shopping-bag', count: 28 },
-    { id: '7', name: 'Entertainment', type: 'entertainment', icon: 'camera', count: 12 },
-];
-
+import { CategoryIcon } from '@/components/CategoryIcon'
+import { useCategories, useCategoryCounts } from '@/hooks/useCategories'
 
 const Page = () => {
+    const { categories, loading: categoriesLoading, error } = useCategories();
+    const { categoryCounts, loading: countsLoading } = useCategoryCounts();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
+    const categoriesWithCount = useMemo(() => {
+        return categories.map(category => ({
+            ...category,
+            count: categoryCounts[category.name] || 0
+        }))
+    }, [categories, categoryCounts]);
+
+    const sortedCategories = useMemo(() => {
+        return categoriesWithCount.sort((a, b) => {
+            if (a.name === b.name) {
+                return a.count - b.count;
+            }
+            return a.name.localeCompare(b.name);
+        });
+    }, [categoriesWithCount]);
+
+    const loading = categoriesLoading || countsLoading;
+
+    if (loading) {
+        return <div className='container mx-auto px-4 py-8'>
+            <div className='flex items-center justify-center h-screen'>
+                <div className='animate-spin rounded-full h-16 w-16 border-t-2 border-near-purple'></div>
+            </div>
+            <p className='text-center text-gray-500'>Loading categories...</p>
+        </div>;
+    }
+
+    if (error) {
+        return <div className='container mx-auto px-4 py-8 text-red-500'>Error loading categories: {error}</div>;
+    }
     return (
         <div className='min-h-screen bg-near-gray flex flex-col'>
             <main className='flex-1 pt-10 pb-16'>
@@ -61,24 +83,24 @@ const Page = () => {
 
                     {viewMode === 'grid' ? (
                         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4'>
-                            {categories.map((category, index) => (
+                            {sortedCategories.map((category, index) => (
                                 <div
-                                    key={category.id}
-                                    className={cn('bg-whtie shadow-md rounded-xl p-6 card-hover transition-all duration-500 transform')}
+                                    key={index}
+                                    className={cn('bg-white shadow-md rounded-xl p-6 card-hover transition-all duration-500 transform')}
                                 >
                                     <div className='h-16 w-16 bg-near-purple/10 rounded-full flex items-center justify-center mb-4'>
                                         <CategoryIcon
-                                            type={category.type}
+                                            type={category.name}
                                             size={24}
                                         />
                                     </div>
                                     <div className='flex flex-col items-start gap-2'>
                                         <h3 className='text-lg font-medium mb-2'>
-                                            {category.name}
+                                            {category.name.toLocaleUpperCase().charAt(0) + category.name.slice(1)}
                                         </h3 >
                                         <p className='text-gray-500 text-sm'>{category.count} places</p>
-                                        <p className='text-sm text-gray-600 mb-2'>Find the best {category.name.toLowerCase()} around ABAC</p>
-                                        <Link href={`/categories/${category.type}`} className='text-near-purple hover:text-near-purple-dark transition-colors hover:underline text-sm font-medium'>Browse {category.name.toLowerCase()}</Link>
+                                        <p className='text-sm text-gray-600 mb-2'>Find the best {category.name.toLocaleUpperCase().charAt(0) + category.name.slice(1)} around ABAC</p>
+                                        <Link href={`/categories/${category.name}`} className='text-near-purple hover:text-near-purple-dark transition-colors hover:underline text-sm font-medium'>Browse {category.name}</Link>
                                     </div>
 
                                 </div>
@@ -86,26 +108,26 @@ const Page = () => {
                         </div>
                     ) : (
                         <div className='bg-white rounded-lg shadow-md overflow-hidden'>
-                            {categories.map((category, index) => (
+                            {sortedCategories.map((category, index) => (
                                 <div
-                                    key={category.id}
+                                    key={index}
                                     className={cn('p-4 border-b border-gray-100 hover:bg-near-gray transition-colors flex items-center justify-between')}
                                 >
                                     <div className='flex items-center gap-4'>
                                         <div className='h-16 w-16 bg-near-purple/10 rounded-full flex items-center justify-center flex-shrink-0'>
                                             <CategoryIcon
-                                                type={category.type}
+                                                type={category.name}
                                                 size={24}
                                             />
                                         </div>
                                         <div>
                                             <h3 className='font-medium'>
-                                                {category.name}
+                                                {category.name.toLocaleUpperCase().charAt(0) + category.name.slice(1)}
                                             </h3 >
-                                            <p className='text-gray-500 text-sm'>{category.count} places around ABAC</p>
+                                            <p className='text-gray-500 text-sm'> {category.count} {category.name.toLocaleUpperCase().charAt(0) + category.name.slice(1)} places around ABAC</p>
                                         </div>
                                     </div>
-                                    <Link href={`/categories/${category.type}`} className='text-near-purple hover:text-near-purple-dark transition-colors hover:underline text-sm font-medium'>Browse</Link>
+                                    <Link href={`/categories/${category.name}`} className='text-near-purple hover:text-near-purple-dark transition-colors hover:underline text-sm font-medium'>Browse</Link>
 
                                 </div>
                             ))}

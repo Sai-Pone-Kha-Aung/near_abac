@@ -1,53 +1,31 @@
 "use client"
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Building, Cake, Camera, ChevronRight, Coffee, Home, ShoppingBag, Utensils } from 'lucide-react'
-import { CategoryType } from '@/types/types';
+import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils';
-import { Category } from '@/types/types';
-
-const categories: Category[] = [
-    { id: '1', name: 'Apartments', type: 'apartment', icon: 'building', count: 24 },
-    { id: '2', name: 'Condos', type: 'condo', icon: 'home', count: 18 },
-    { id: '3', name: 'Restaurants', type: 'restaurant', icon: 'utensils', count: 42 },
-    { id: '4', name: 'Cafes', type: 'cafe', icon: 'coffee', count: 36 },
-    { id: '5', name: 'Bakeries', type: 'bakery', icon: 'cake', count: 15 },
-    { id: '6', name: 'Shopping', type: 'shopping', icon: 'shopping-bag', count: 28 },
-    { id: '7', name: 'Entertainment', type: 'entertainment', icon: 'camera', count: 12 },
-];
-
-interface CategoryIconProps {
-    type: CategoryType;
-    size?: number;
-}
-
-export const CategoryIcon = ({ type, size
-}: CategoryIconProps) => {
-    const iconProps = { className: `h-${size} w-${size}` };
-
-    switch (type) {
-        case 'apartment':
-            return <Building {...iconProps} />;
-        case 'condo':
-            return <Home {...iconProps} />;
-        case 'restaurant':
-            return <Utensils {...iconProps} />;
-        case 'cafe':
-            return <Coffee {...iconProps} />;
-        case 'bakery':
-            return <Cake {...iconProps} />;
-        case 'shopping':
-            return <ShoppingBag {...iconProps} />;
-        case 'entertainment':
-        default:
-            return <Camera {...iconProps} />;
-    }
-}
-
-export { categories };
+import { useCategories, useCategoryCounts } from '@/hooks/useCategories';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 const Categories = () => {
+    const { categories } = useCategories();
     const [isVisible, setIsVisible] = useState(false);
+    const { categoryCounts } = useCategoryCounts();
+
+    const categoriesWithCount = useMemo(() => {
+        return categories.map(category => ({
+            ...category,
+            count: categoryCounts[category.name] || 0
+        }))
+    }, [categories, categoryCounts]);
+
+    const sortedCategories = useMemo(() => {
+        return categoriesWithCount.sort((a, b) => {
+            if (a.name === b.name) {
+                return a.count - b.count;
+            }
+            return a.name.localeCompare(b.name);
+        });
+    }, [categoriesWithCount]);
 
     useEffect(() => {
         const observer = new IntersectionObserver((
@@ -83,14 +61,14 @@ const Categories = () => {
                     </p>
                 </div>
 
-                <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 md:gap-6'>
-                    {categories.map((category, index) => (
-                        <Link key={category.id} href={`/categories/${category.type}`}
+                <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6'>
+                    {sortedCategories.slice(0, 6).map((category, index) => (
+                        <Link key={index} href={`/categories/${category.name}`}
                             className={cn('bg-white rounded-xl shadow-sm p-4 text-center card-hover transition-all duration-500 transform', isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',)} style={{ transitionDelay: `${index * 0.1}s` }}>
                             <div className='h-14 w-14 bg-near-purple/10 rounded-full flex items-center justify-center mx-auto mb-4'>
-                                <CategoryIcon type={category.type} size={24} />
+                                <CategoryIcon type={category.name} size={24} />
                             </div>
-                            <h3 className='font-medium mb-1'>{category.name}</h3>
+                            <h3 className='font-medium mb-1'>{category.name.toLocaleUpperCase().charAt(0) + category.name.slice(1)}</h3>
                             <p className='text-sm text-gray-500 '>{category.count} places</p>
 
                         </Link>

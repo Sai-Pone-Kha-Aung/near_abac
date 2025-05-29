@@ -8,16 +8,17 @@
 [x] zod validation
 [x] admin page
 [x] auth
-[] update hero section
-[] add the list table on admin page & profile page
+[x] update hero section
+[x] add the list table on admin page & profile page
 [] toast
 
 **Backend**
 
-[] Database migration
-[] setup database
-[] api CRUD
-[] migrate with clerk
+[x] Database migration
+[x] setup database
+[x] api CRUD
+[x] integration with clerk
+[] api for add listing and edit
 
 **Design**
 [] Database Design

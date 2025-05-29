@@ -3,63 +3,82 @@ import { Command, CommandInput, CommandItem, CommandList } from '@/components/ui
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { sheetsData } from "@/types/types";
+import { Listing, sheetsData } from "@/types/types";
+import { usePaginationListings } from "@/hooks/usePaginationListings";
 
 interface SearchDialogProps {
-    isDialogOpen: boolean;
     onClose: () => void;
     className?: string;
 
 }
 
 const SearchDialog = ({ onClose, className }: SearchDialogProps) => {
-    const [data, setData] = useState<sheetsData[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
+    const [allItems, setAllItems] = useState<string[]>([]);
+    const { listings, loading, error, setSearchTerm, searchTerm } = usePaginationListings();
     const router = useRouter();
-    const range = 'Sheet1!A1:M';
 
     useEffect(() => {
         if (isDialogOpen) {
-            const fetchData = async () => {
-                const response = await fetch(`/api/postData?range=${encodeURIComponent(range)}`); // Replace with your API endpoint
-                const result = await response.json();
-                setData(result);
+            const fetchCategories = async () => {
+                try {
+                    const response = await fetch('/api/listings?fetchAll=true');
+                    const allListings = await response.json();
+
+                    if (Array.isArray(allListings)) {
+                        const uniqueCategories = Array.from(
+                            new Set(allListings.map((listing: Listing) => listing.category))
+                        ).filter(Boolean) as string[];
+                        setAllItems(uniqueCategories);
+                    }
+                } catch (error) {
+                    console.error('Error fetching categories:', error);
+                }
             };
-            fetchData();
+            fetchCategories();
         }
     }, [isDialogOpen]);
 
     useEffect(() => {
-        const uniqueCategories = Array.from(new Set((data || []).map(category => category.category)));
-        setFilteredCategories(uniqueCategories);
-    }, [data]);
+        const timeoutId = setTimeout(() => {
+            setSearchTerm(searchQuery.trim());
+        }, 500);
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery, setSearchTerm]);
+
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
-        if (query) {
-            const filtered = filteredCategories.filter(category => category.toLowerCase().includes(query.toLowerCase()));
-            console.log('Filtered Categories:', filtered);
-            setFilteredCategories(filtered);
-        } else {
-            console.log('Resetting Filtered Categories:', filteredCategories);
-            setFilteredCategories(filteredCategories);
-        }
     }
 
-    const handleSelect = (category: string) => {
-        setSearchQuery(category);
-        setFilteredCategories([category]);
+    const handleSelectListing = (listingId: string) => {
+        router.push(`/listing/${listingId}`);
+        onClose();
+        setIsDialogOpen(false);
+    }
+
+    const handleSelectCategory = (category: string) => {
+        router.push(`/categories/${category}`);
+        onClose();
+        setIsDialogOpen(false);
     }
 
     const handleButtonSearch = () => {
-        if (searchQuery) {
-            router.push(`/category/${searchQuery}`);
+        if (searchQuery.trim()) {
+            router.push(`/categories?search=${encodeURIComponent(searchQuery.trim())}`);
             onClose();
             setIsDialogOpen(false);
         }
     }
+
+    const filteredCategories = searchTerm.trim()
+        ? allItems.filter((category) => category.toLowerCase().includes(searchTerm.toLowerCase()))
+        : allItems.slice(0, 5);
+
+    const showListings = searchTerm.trim() && listings.length > 0;
+    const showCategories = filteredCategories.length > 0;
+    const showNoResults = searchQuery.trim() && searchTerm.trim() && !loading && !showListings && !showCategories;
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
@@ -78,27 +97,68 @@ const SearchDialog = ({ onClose, className }: SearchDialogProps) => {
                 <DialogHeader>
                     <DialogTitle>Search</DialogTitle>
                     <DialogDescription>
-                        Search by category
+                        Search for listings or categories near ABAC.
+                        You can search by listing name, category, or any other relevant keyword.
                     </DialogDescription>
-                    <Command>
+                    <Command shouldFilter={false}>
                         <CommandInput
                             data-testid="search-input"
                             placeholder="Search for Near ABAC"
                             value={searchQuery}
-                            onValueChange={(value) => handleSearch(value)}
+                            onValueChange={handleSearch}
                         />
                         <CommandList>
-                            {filteredCategories.length > 0 ? (
-                                filteredCategories.map((category, index) => (
-                                    <CommandItem
-                                        key={index}
-                                        onSelect={() => handleSelect(category)}
-                                    >
-                                        {category}
-                                    </CommandItem>
-                                ))
-                            ) : (
-                                <CommandItem>No result found</CommandItem>
+                            {loading && searchTerm.trim() && (
+                                <CommandItem>
+                                    <div className="flex justify-center items-center space-x-2">
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-near-purple"></div>
+                                        <span>Loading...</span>
+                                    </div>
+                                </CommandItem>
+                            )}
+                            {showNoResults && (
+                                <CommandItem>
+                                    No results found
+                                </CommandItem>
+                            )}
+                            {showListings && (
+                                <>
+                                    {listings.map((listing) => (
+                                        <CommandItem
+                                            key={listing.id}
+                                            onSelect={() => handleSelectListing(listing.id)}
+                                            className="flex flex-col items-start py-3"
+                                        >
+                                            <span className="font-medium">{listing.name}</span>
+                                            <span className="text-sm text-muted-foreground">{listing.category} • {listing.address}</span>
+
+                                        </CommandItem>
+                                    ))}
+                                </>
+                            )}
+
+                            {showCategories && (
+                                <>
+                                    {showListings && (
+                                        <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b mt-2">
+                                            Categories
+                                        </div>
+                                    )}
+                                    {!showListings && !searchTerm.trim() && (
+                                        <div className="px-2 py-1 text-xs font-medium text-muted-foreground border-b">
+                                            Popular Categories
+                                        </div>
+                                    )}
+                                    {filteredCategories.map((category, index) => (
+                                        <CommandItem
+                                            key={index}
+                                            onSelect={() => handleSelectCategory(category)}
+                                            className="py-2"
+                                        >
+                                            <span className="capitalize">{category}</span>
+                                        </CommandItem>
+                                    ))}
+                                </>
                             )}
                         </CommandList>
                     </Command>
@@ -106,8 +166,10 @@ const SearchDialog = ({ onClose, className }: SearchDialogProps) => {
                         data-testid="search-button"
                         variant="outline"
                         onClick={handleButtonSearch}
+                        disabled={!searchQuery.trim() || loading}
+                        className="mt-2"
                     >
-                        Search
+                        View All Results
                     </Button>
                 </DialogHeader>
             </DialogContent>

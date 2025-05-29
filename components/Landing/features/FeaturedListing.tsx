@@ -1,32 +1,38 @@
 import React from 'react'
 import FeatureSection from './FeatureSection'
-import { apartmentListings, bakeryListings, cafeListings } from './FeatureData'
+import { useListings } from '@/hooks/useListings'
 
 const FeaturedListing = () => {
+    const { listings } = useListings(true)
+    const apartmentListings = listings?.filter(listing => listing.category === 'apartment-condo').slice(0, 4) || [];
+    const restaurants = listings?.filter(listing => listing.category === 'restaurant').slice(0, 4) || [];
+    const cafeListings = listings?.filter(listing => listing.category === 'cafe').slice(0, 4) || [];
+
+
     return (
         <div id='feature' className='bg-white'>
             <FeatureSection
                 listings={apartmentListings}
-                title="Appartments & Condos"
+                title="Apartments & Condos"
                 subtitle="Discover the best apartments and condos near Assumption University."
-                type='apartment'
+                type='apartment-condo'
             />
 
             <div className='bg-near-gray py-0.5'></div>
 
             <FeatureSection
-                listings={bakeryListings}
-                title="Bakery & Cafes"
-                subtitle="Explore the best bakeries and cafes near Assumption University."
-                type='bakery'
+                listings={restaurants}
+                title="Restaurants"
+                subtitle="Explore the best restaurants near Assumption University."
+                type='restaurant'
             />
 
             <div className='bg-near-gray py-0.5'></div>
 
             <FeatureSection
                 listings={cafeListings}
-                title="Cafes & Restaurants"
-                subtitle="Find the best cafes and restaurants near Assumption University."
+                title="Cafes"
+                subtitle="Find the best cafes near Assumption University."
                 type='cafe'
             />
         </div>
