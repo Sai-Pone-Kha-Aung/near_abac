@@ -7,13 +7,7 @@ import { ViewTransitions } from "next-view-transitions";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
-const fontHeading = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-heading',
-})
-
-const fontBody = Inter({
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-body',
@@ -35,8 +29,7 @@ export default function RootLayout({
         <html lang="en">
           <body className={cn(
             'antialiased',
-            fontHeading.variable,
-            fontBody.variable
+            inter.variable
           )}>
             <Navbar />
             {children}

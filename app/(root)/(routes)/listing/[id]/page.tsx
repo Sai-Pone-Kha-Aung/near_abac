@@ -4,18 +4,17 @@ import { ArrowLeft, Clock, ExternalLink, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CategoryIcon } from '@/components/CategoryIcon'
 import { useParams } from 'next/navigation'
-import GoogleMapComponent from '@/components/Map-Modal'
-import MapModal from '@/components/Map-Modal'
 import { useListingsById } from '@/hooks/useListings'
-import CustomImage from '@/components/CustomImage'
+import Image from 'next/image'
 
 const Page = () => {
     const { id } = useParams();
     const { listing, loading } = useListingsById(id as string)
+    const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
 
     if (loading && !listing) {
         return (
-            <div className='min-h-screen flex items-center justify-center'>
+            <div className='min-h-screen flex items-center justify-center gap-2'>
                 <div className='animate-spin rounded-full h-16 w-16 border-t-2 border-near-purple'></div>
                 <p className='text-center text-gray-500'>Loading listing...</p>
             </div>
@@ -43,8 +42,8 @@ const Page = () => {
 
                     <div className='mt-6 bg-white rounded-xl shadow-md overflow-hidden'>
                         <div className='relative aspect-video w-full  overflow-hidden'>
-                            <CustomImage
-                                src={listing?.img_url || 'default.png'}
+                            <Image
+                                src={`${imageKitEndpoint}/${listing?.img_url || 'default.png'}`}
                                 alt={`Image of ${listing?.name}`}
                                 className={`w-full h-full object-cover backdrop:blur-sm`}
                                 width={1920}
@@ -104,7 +103,7 @@ const Page = () => {
                         <h2 className='text-2xl font-bold my-6'>{listing?.name} Location</h2>
                         <div className='absolute inset-0 bg-near-gray-dark'>
                             <iframe
-                                src={listing?.google_map_link || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3877.7574928636877!2d100.83533621160441!3d13.611617900466568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x311d430e775155f9%3A0xf01923824353260!2sAssumption%20University%20Suvarnabhumi%20Campus!5e0!3m2!1sen!2sth!4v1746586303134!5m2!1sen!2sth"}
+                                src={"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3877.7574928636877!2d100.83533621160441!3d13.611617900466568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x311d430e775155f9%3A0xf01923824353260!2sAssumption%20University%20Suvarnabhumi%20Campus!5e0!3m2!1sen!2sth!4v1746586303134!5m2!1sen!2sth"}
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}

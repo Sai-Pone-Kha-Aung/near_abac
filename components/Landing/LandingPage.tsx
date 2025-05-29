@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import Hero from './components/Hero'
-import Categories from './components/Categories'
-import Map from './components/Map'
-import { FeaturedListing } from './features'
+import dynamic from 'next/dynamic'
+const Hero = dynamic(() => import('@/components/Landing/components/Hero'), {
+    ssr: false,
+})
+const Categories = dynamic(() => import('@/components/Landing/components/Categories'), {
+    ssr: false,
+})
+const Map = dynamic(() => import('@/components/Landing/components/Map'), {
+    ssr: false,
+})
+const FeaturedListing = dynamic(() => import('@/components/Landing/features/FeaturedListing'), {
+    ssr: false,
+})
 
 const LandingPage = () => {
     const [mounted, setMounted] = useState(false)

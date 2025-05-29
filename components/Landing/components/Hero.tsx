@@ -4,12 +4,13 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
-import CustomImage from '@/components/CustomImage'
+import Image from 'next/image'
 
 const Hero = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const user = useUser()
     const isLoggedIn = user.isSignedIn
+    const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
 
     return (
         <section className='flex flex-col items-center justify-center h-screen bg-gradient-to-b from-white to-gray-700 overflow-hidden relative w-full'>
@@ -17,8 +18,8 @@ const Hero = () => {
             <div className='absolute inset-0 z-0'>
                 <div className='absolute inset-0 bg-black/35 z-10'>
                 </div>
-                <CustomImage
-                    src='heroimg.jpg'
+                <Image
+                    src={`${imageKitEndpoint}/heroimg.jpg`}
                     alt='heroimage'
                     onLoad={() => setIsLoaded(true)}
                     className={`w-full h-full object-cover backdrop:blur-sm`}

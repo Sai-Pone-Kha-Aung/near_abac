@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils'
 import { Listing } from '@/types/types'
 import { ExternalLink } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import CustomImage from '@/components/CustomImage';
 
 interface ListingCardProps {
     listing: Listing;
@@ -15,6 +14,7 @@ interface ListingCardProps {
 const ListingCard = ({ listing, index }: ListingCardProps) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const router = useRouter();
+    const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
     return (
         <div onClick={() => router.push(`/listing/${listing.id}`)} className='card-hover rounded-xl overflow-hidden bg-white shadow-md block cursor-pointer' style={{
             animationDelay: `${index * 0.1}s`,
@@ -24,8 +24,8 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
 
         >
             <div className='relative aspect-[4/3] overflow-hidden'>
-                <CustomImage
-                    src={listing.img_url || 'default.png'}
+                <Image
+                    src={`${imageKitEndpoint}/${listing?.img_url || 'default.png'}`}
                     alt="nearabac listing image"
                     className={cn('w-full h-full object-cover transition-opacity duration-500')}
                     onLoad={() => setImageLoaded(true)}
