@@ -4,11 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link';
 
 const NotFound = () => {
-    const router = useRouter();
 
-    const handleGoBack = () => {
-        router.push('/');
-    }
     return (
         <div className='min-h-screen flex bg-gray-300 items-center justify-center'>
             <div className='text-center'>
