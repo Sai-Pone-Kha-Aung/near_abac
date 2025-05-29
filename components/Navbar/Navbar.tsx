@@ -4,12 +4,11 @@ import Mobile from './Mobile'
 import SearchDialog from '../Search/SearchDialog'
 import { Link } from 'next-view-transitions'
 import { Button } from '../ui/button'
-import { MapPin, User } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
-import { SignOutButton, useAuth, useUser } from '@clerk/nextjs';
+import { SignOutButton, useUser, useSession } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-
 
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);
@@ -25,7 +24,6 @@ const Navbar = () => {
   }
 
   return (
-
     <header className="sticky top-0 z-50 w-full bg-background/80 text-black backdrop-blur-md px-4 py-4 shadow-sm">
       <div className='container mx-auto'>
         <div className='flex justify-between items-center'>
@@ -55,7 +53,7 @@ const Navbar = () => {
           </nav>
           {/* Search */}
           <div className="hidden md:inline-flex relative">
-            <SearchDialog onClose={() => { }} isDialogOpen={false} className='flex gap-2 w-[300px] text-gray-500 justify-start rounded-full' />
+            <SearchDialog onClose={() => { }} className='flex gap-2 w-[300px] text-gray-500 justify-start rounded-full' />
           </div>
 
           <div className='hidden md:flex items-center ml-4 space-x-6'>
@@ -64,11 +62,15 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant='outline' className='rounded-full h-10 w-10 p-0' aria-label="User menu">
                     <Image
-                      src={user?.imageUrl}
+                      src={user?.imageUrl || '/default.png'}
                       alt="User Avatar"
                       width={40}
                       height={40}
                       className="rounded-full"
+                      onError={(e) => {
+                        e.currentTarget.src = '/default.png';
+                      }}
+                      unoptimized
                     />
                   </Button>
                 </DropdownMenuTrigger>

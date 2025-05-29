@@ -1,7 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { sheetsData } from '@/types/types';
-import { Link } from 'next-view-transitions';
 import Card from '@/components/Card/Card';
 
 interface CategorySectionProps {

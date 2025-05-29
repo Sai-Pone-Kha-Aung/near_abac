@@ -5,8 +5,8 @@ import { useUser } from '@clerk/nextjs'
 import { UserProfile } from '@clerk/nextjs'
 import { List } from 'lucide-react'
 import CustomTable from '@/components/Table/Custom-Table'
-import { listings } from '@/constant/data'
 import { SortOrder } from 'antd/es/table/interface'
+import { usePaginationListings } from '@/hooks/usePaginationListings'
 
 
 const DotIcon = () => {
@@ -25,7 +25,7 @@ const columns = [
 const Page = () => {
     const { id } = useParams()
     const { user } = useUser()
-
+    const { listings } = usePaginationListings();
     return (
         <section className='py-16 md:py-20'>
             <div className='container mx-auto'>
