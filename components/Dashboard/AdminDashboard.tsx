@@ -8,6 +8,7 @@ import { XAxis, YAxis, Tooltip, CartesianGrid, Bar } from 'recharts'
 import Table from 'antd/es/table'
 import { SortOrder } from 'antd/es/table/interface';
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 
 const ResponsiveContainer = dynamic(() =>
     import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false }
@@ -75,6 +76,7 @@ const overview_card: OverviewCardProps[] = [
 ]
 
 const AdminDashboard = () => {
+    const router = useRouter();
     return (
         <div className='flex flex-col bg-white'>
             <div className='flex-grow container mx-auto px-4 py-8 mt-8'>
@@ -84,7 +86,9 @@ const AdminDashboard = () => {
                         <p className='text-sm text-gray-500'>Manage your listings and analytics</p>
                     </div>
                     <div className='mt-4 md:mt-0'>
-                        <Button size="sm" className='bg-near-purple text-white rounded-md px-4 py-2 flex items-center gap-2'>
+                        <Button size="sm" className='bg-near-purple text-white rounded-md px-4 py-2 flex items-center gap-2'
+                            onClick={() => router.push('/add-listing')}
+                        >
                             <Plus className='w-4 h-4' />
                             Add New Listing
                         </Button>

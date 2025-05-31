@@ -1,14 +1,17 @@
 "use client";
 import { useEffect, useState } from 'react'
-import Mobile from './Mobile'
-import SearchDialog from '../Search/SearchDialog'
 import { Link } from 'next-view-transitions'
 import { Button } from '../ui/button'
 import { MapPin } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
-import { SignOutButton, useUser, useSession } from '@clerk/nextjs';
+import { SignOutButton, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
+
+const Mobile = dynamic(() => import('@/components/Navbar/Mobile'), { ssr: false });
+
+const SearchDialog = dynamic(() => import('@/components/Search/SearchDialog'), { ssr: true });
 
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);

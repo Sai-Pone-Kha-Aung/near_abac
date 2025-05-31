@@ -9,8 +9,10 @@ import "./globals.css";
 
 const inter = Inter({
   subsets: ['latin'],
-  display: 'swap',
+  display: 'block', // Prevents FOIT (Flash of Invisible Text)
   variable: '--font-body',
+  preload: true,
+  fallback: ['system-ui', 'Arial', 'sans-serif']
 })
 
 export const metadata: Metadata = {
@@ -26,18 +28,44 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <ViewTransitions>
-        <html lang="en">
+        <html lang="en" className={inter.variable}>
+          <head>
+            {/* Preload critical resources */}
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            {/* Prevent layout shift from external scripts */}
+            <style dangerouslySetInnerHTML={{
+              __html: `
+                                body { 
+                                    font-family: var(--font-body), system-ui, Arial, sans-serif;
+                                    visibility: hidden;
+                                }
+                                .fonts-loaded body { 
+                                    visibility: visible; 
+                                }
+                            `
+            }} />
+          </head>
           <body className={cn(
-            'antialiased',
+            'antialiased min-h-screen flex flex-col',
             inter.variable
           )}>
             <Navbar />
-            {children}
+            <main className="flex-1">
+              {children}
+            </main>
             <Footer />
+            {/* Font loading optimization */}
+            <script dangerouslySetInnerHTML={{
+              __html: `
+                                document.fonts.ready.then(() => {
+                                    document.documentElement.classList.add('fonts-loaded');
+                                });
+                            `
+            }} />
           </body>
         </html>
       </ViewTransitions>
     </ClerkProvider>
-
   );
 }

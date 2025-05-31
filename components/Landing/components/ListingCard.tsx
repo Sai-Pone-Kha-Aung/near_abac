@@ -15,6 +15,14 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const router = useRouter();
     const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
+
+    if (listing.img_url && !listing.img_url.startsWith('http')) {
+        listing.img_url = `${imageKitEndpoint}/${listing.img_url}`;
+    }
+
+    if (listing.img_url === null) {
+        listing.img_url = `${imageKitEndpoint}/default.png`;
+    }
     return (
         <div onClick={() => router.push(`/listing/${listing.id}`)} className='card-hover rounded-xl overflow-hidden bg-white shadow-md block cursor-pointer' style={{
             animationDelay: `${index * 0.1}s`,
@@ -25,7 +33,7 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
         >
             <div className='relative aspect-[4/3] overflow-hidden'>
                 <Image
-                    src={`${imageKitEndpoint}/${listing?.img_url || 'default.png'}`}
+                    src={listing.img_url}
                     alt="nearabac listing image"
                     className={cn('w-full h-full object-cover transition-opacity duration-500')}
                     onLoad={() => setImageLoaded(true)}

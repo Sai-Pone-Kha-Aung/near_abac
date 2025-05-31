@@ -6,9 +6,15 @@ import {
 import { NextResponse } from "next/server";
 import { createClient } from "./utils/supabase/server";
 
-const isPublicRoute = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/api/listings",
+]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 const isAuthRoute = createRouteMatcher(["/profile(.*)"]);
+const isProtectedApiRoute = createRouteMatcher(["/api/listings"]);
 
 type UserMetadata = {
   role: string;
@@ -58,7 +64,7 @@ async function syncUserToSupabase(userId: string) {
 }
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, redirectToSignIn, sessionClaims } = await auth();
+  const { userId, sessionClaims } = await auth();
 
   if (userId && sessionClaims && (isAuthRoute(req) || isAdminRoute(req))) {
     await syncUserToSupabase(userId).catch(console.error);
