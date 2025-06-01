@@ -1,16 +1,18 @@
 'use client'
 import Link from 'next/link'
-import { ArrowLeft, Clock, ExternalLink, MapPin } from 'lucide-react'
+import { ArrowLeft, Clock, Edit, ExternalLink, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CategoryIcon } from '@/components/CategoryIcon'
 import { useParams } from 'next/navigation'
 import { useListingsById } from '@/hooks/useListings'
 import Image from 'next/image'
+import { useUser } from '@clerk/nextjs'
 
 const Page = () => {
     const { id } = useParams();
     const { listing, loading } = useListingsById(id as string)
     const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
+    const { user } = useUser();
 
     if (loading && !listing) {
         return (
@@ -27,23 +29,38 @@ const Page = () => {
             </div>
         )
     }
+
+    if (listing.img_url && !listing.img_url.startsWith('http')) {
+        listing.img_url = `${imageKitEndpoint}/${listing.img_url}`;
+    }
+
+    if (listing.img_url === null) {
+        listing.img_url = `${imageKitEndpoint}/default.png`;
+    }
+
     return (
         <div className='min-h-screen bg-near-gray flex flex-col'>
             <main className='flex-1 pt-10 pb-16'>
                 <div className='container mx-auto px-4'>
-                    <div>
+                    <div className='flex flex-col md:flex-row items-center justify-between mb-6'>
                         <div className='flex items-center mb-2'>
                             <Link href={`/categories/${listing?.category}`} className='flex items-center gap-1 text-near-purple hover:text-near-purple-dark transition-colors text-sm'>
                                 <ArrowLeft className='w-4 h-4' />
                                 <span>Back to {listing?.category ? listing.category.toLocaleUpperCase().charAt(0) + listing.category.slice(1) : 'Category'}</span>
                             </Link>
                         </div>
+                        {(user?.id === listing.user_id || user?.publicMetadata.role === "admin") && <Button variant='outline' className='flex items-center gap-2 bg-near-purple text-white hover:bg-near-purple-dark transition-colors self-start hover:text-white' onClick={() => { window.open(`/edit-listing/${listing.id}`, "_blank") }}>
+                            <Edit className='w-4 h-4' />
+                            <span>Edit listing</span>
+                            <ExternalLink className='w-3 h-3' />
+                        </Button>
+                        }
                     </div>
 
                     <div className='mt-6 bg-white rounded-xl shadow-md overflow-hidden'>
                         <div className='relative aspect-video w-full  overflow-hidden'>
                             <Image
-                                src={`${imageKitEndpoint}/${listing?.img_url || 'default.png'}`}
+                                src={`${listing?.img_url}`}
                                 alt={`Image of ${listing?.name}`}
                                 className={`w-full h-full object-cover backdrop:blur-sm`}
                                 width={1920}
@@ -75,6 +92,12 @@ const Page = () => {
                                 </Button>
                             </div>
 
+                            <div className='mt-6'>
+                                <h3 className='text-lg font-semibold'>Address</h3>
+                                <p className='mt-2 text-gray-600 leading-relaxed'>
+                                    {listing?.address || 'No address provided'}
+                                </p>
+                            </div>
                             <div className='mt-6'>
                                 <h3 className='text-lg font-semibold'>Description</h3>
                                 <p className='mt-2 text-gray-600 leading-relaxed'>

@@ -1,5 +1,3 @@
-"use client";
-
 import { APIResponse, Category, Listing } from "@/types/types";
 import { useState, useEffect, useCallback } from "react";
 

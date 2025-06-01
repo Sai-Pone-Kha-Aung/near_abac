@@ -3,7 +3,7 @@ import { Command, CommandInput, CommandItem, CommandList } from '@/components/ui
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Listing, sheetsData } from "@/types/types";
+import { Listing } from "@/types/types";
 import { usePaginationListings } from "@/hooks/usePaginationListings";
 
 interface SearchDialogProps {

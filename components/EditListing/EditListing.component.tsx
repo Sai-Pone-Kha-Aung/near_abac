@@ -1,15 +1,18 @@
 "use client"
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Upload } from 'lucide-react'
+import { ArrowLeft, Upload } from 'lucide-react'
 import { z, ZodType } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Image from 'next/image'
 import { uploadImageToImageKit } from '@/lib/image-upload'
+import { useListingsById } from '@/hooks/useListings'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 type FormData = {
     name: string;
@@ -25,10 +28,18 @@ type FormData = {
     distance?: string;
 }
 
-const AddListing = () => {
+interface EditListingProps {
+    listingId: string;
+}
+
+const EditListing = ({ listingId }: EditListingProps) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const { listing, loading, error } = useListingsById(listingId);
+    const router = useRouter();
+    const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
 
     const formData: ZodType<FormData> = z.object({
         name: z.string().min(1, { message: "Name is required" }),
@@ -60,7 +71,7 @@ const AddListing = () => {
         distance: z.string().optional(),
     })
 
-    const { register, handleSubmit, setValue, formState: { errors }, watch } = useForm<FormData>({
+    const { register, handleSubmit, setValue, formState: { errors }, watch, reset } = useForm<FormData>({
         resolver: zodResolver(formData),
         defaultValues: {
             name: '',
@@ -79,15 +90,40 @@ const AddListing = () => {
 
     const selectedImage = watch('img_url')
 
+    useEffect(() => {
+        if (listing) {
+            reset({
+                name: listing.name || '',
+                category: listing.category || '',
+                address: listing.address || '',
+                description: listing.description || '',
+                phone: listing.phone || '',
+                facebook_url: listing.facebook_url || '',
+                instagram_url: listing.instagram_url || '',
+                google_map_link: listing.google_map_link || '',
+                line_id: listing.line_id || '',
+                img_url: null, // Reset image URL to allow new upload
+                distance: listing.distance || ''
+            });
+
+            if (listing.img_url) {
+                const imageUrl = listing.img_url.startsWith('http')
+                    ? listing.img_url
+                    : `${imageKitEndpoint}/${listing.img_url}`;
+                setPreviewImage(imageUrl);
+            }
+        }
+    }, [listing, reset, imageKitEndpoint]);
+
     const onSubmit = async (data: FormData) => {
         try {
             setIsSubmitting(true);
             setUploadProgress(10);
 
-            let imageUrl = '';
+            let imageUrl = previewImage || '';
             let imageFileId = '';
 
-            if (data.img_url) {
+            if (data.img_url && data.img_url instanceof File) {
                 setUploadProgress(50);
                 const uploadResult = await uploadImageToImageKit(data.img_url)
                 imageUrl = uploadResult.url;
@@ -114,20 +150,21 @@ const AddListing = () => {
 
             setUploadProgress(80);
 
-            const response = await fetch('/api/listings', {
-                method: 'POST',
+            const response = await fetch(`/api/listings/${listingId}`, {
+                method: 'PUT',
                 body: formDataToSubmit,
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit form');
+                throw new Error('Failed to update listing');
             }
             const result = await response.json();
             setUploadProgress(100);
-            console.log('Form submitted successfully:', result);
+            console.log('Listing updated successfully:', result);
 
+            router.push(`/listing/${listingId}`);
         } catch (error) {
-            console.error('Error submitting form:', error)
+            console.error('Error updating listing:', error)
         } finally {
             setIsSubmitting(false);
             setUploadProgress(0);
@@ -142,10 +179,29 @@ const AddListing = () => {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setValue('img_url', e.target.files[0], {
+            const file = e.target.files[0]
+            setValue('img_url', file, {
                 shouldValidate: true,
-            })
+            });
+            setPreviewImage(URL.createObjectURL(file));
         }
+    }
+
+    if (loading) {
+        return (
+            <div className='min-h-screen flex items-center justify-center gap-4'>
+                <div className='animate-spin rounded-full h-16 w-16 border-t-2 border-near-purple'></div>
+                <p className='text-center text-gray-500'>Loading listing...</p>
+            </div>
+        )
+    }
+
+    if (error || !listing) {
+        return (
+            <div className='min-h-screen flex items-center justify-center'>
+                <p className='text-center text-gray-500'>Listing not found or error loading listing</p>
+            </div>
+        )
     }
 
     return (
@@ -153,8 +209,14 @@ const AddListing = () => {
             <div className='container mx-auto px-4 py-8'>
                 <div className='max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6'>
 
-                    <h1 className='text-3xl font-bold text-gray-900 mb-4'>Add Your Listing</h1>
-                    <p className='text-gray-600 mb-6'>Please fill out the form below to add your listing.</p>
+                    <div className='mb-6'>
+                        <Link href={`/listing/${listingId}`} className='flex items-center gap-1 text-near-purple hover:text-near-purple-dark transition-colors text-sm mb-4'>
+                            <ArrowLeft className='w-4 h-4' />
+                            <span>Back to Listing</span>
+                        </Link>
+                        <h1 className='text-3xl font-bold text-gray-900 mb-4'>Edit Your Listing</h1>
+                        <p className='text-gray-600 mb-6'>Update the information for your listing.</p>
+                    </div>
                     <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
                         {/* Form fields will go here */}
                         <div>
@@ -167,6 +229,7 @@ const AddListing = () => {
                         <div>
                             <label htmlFor="category" className='block text-sm font-medium text-gray-700 mb-1'>Category <span className='text-red-600'>*</span></label>
                             <Select
+                                value={watch('category')}
                                 onValueChange={(value) => setValue('category', value, { shouldValidate: true })}
                             >
                                 <SelectTrigger id='category'>
@@ -228,8 +291,9 @@ const AddListing = () => {
                             <Input type="text" className='w-full border border-gray-300 rounded-md p-2 mt-1' placeholder='Enter Google Map link' id='google_map_link' {...register('google_map_link')} />
                             {errors.google_map_link && <p className='text-red-600 text-sm mt-1'>{errors.google_map_link.message}</p>}
                         </div>
+
                         <div>
-                            <label htmlFor="image" className='block text-sm font-medium text-gray-700 mb-1'>Upload Image <span className='text-red-600'>*</span></label>
+                            <label htmlFor="image" className='block text-sm font-medium text-gray-700 mb-1'>Upload Image</label>
                             <Input
                                 ref={fileInputRef}
                                 type="file"
@@ -244,19 +308,23 @@ const AddListing = () => {
                                 onClick={handleFileClick}
                                 className='cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center hover:border-near-purple transition-colors text-center bg-gray-50 hover:bg-gray-100'
                             >
-                                {selectedImage ? (
+                                {selectedImage || previewImage ? (
                                     <>
                                         <Image
-                                            src={URL.createObjectURL(selectedImage)}
-                                            width={128}
+                                            src={selectedImage ? URL.createObjectURL(selectedImage) : previewImage!}
+                                            width={400}
                                             height={128}
                                             alt="Selected"
                                             className='object-cover rounded-lg mb-2'
                                         />
-                                        <p className="text-sm text-gray-500">Selected: {selectedImage.name}</p>
-                                        <p className="text-xs text-gray-400 mt-1">
-                                            {(selectedImage.size / (1024 * 1024)).toFixed(2)} MB
+                                        <p className="text-sm text-gray-500">
+                                            {selectedImage ? `Selected: ${selectedImage.name}` : 'Current image (click to change)'}
                                         </p>
+                                        {selectedImage && (
+                                            <p className="text-xs text-gray-400 mt-1">
+                                                {(selectedImage.size / (1024 * 1024)).toFixed(2)} MB
+                                            </p>
+                                        )}
                                     </>
                                 ) : (
                                     <>
@@ -278,7 +346,7 @@ const AddListing = () => {
                             <Button className='w-full bg-near-purple text-white hover:bg-near-purple-dark transition-colors' type='submit'
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? 'Creating Listing...' : 'Create Listing'}
+                                {isSubmitting ? 'Updating Listing...' : 'Update Listing'}
                             </Button>
                         </div>
                     </form>
@@ -288,4 +356,4 @@ const AddListing = () => {
     )
 }
 
-export default AddListing
+export default EditListing

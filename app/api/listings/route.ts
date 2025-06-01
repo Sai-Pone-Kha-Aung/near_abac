@@ -5,6 +5,7 @@ import {
   createSuccessResponse,
   NotFoundError,
   ValidationError,
+  APIError,
 } from "@/utils/api-error";
 import {
   ListingQuerySchema,
@@ -15,7 +16,9 @@ import {
   validateSearchParams,
   validateRequest,
 } from "@/utils/validation/middleware";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { Listing } from "@/types/types";
+import { getUploadAuthParams } from "@imagekit/next/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -107,14 +110,43 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await validateRequest(request, CreateListingSchema);
+    // Parse FormData instead of JSON
+    const formData = await request.formData();
+
+    // Extract form fields
+    const fields = Object.fromEntries(formData.entries()) as Record<
+      string,
+      string
+    >;
+    const { name, category, address, description, ...optionalFields } = fields;
+
+    // Validate required field
+    if (!name || !category || !address || !description) {
+      throw new Error(
+        "Missing required fields: name, category, address, and description are required"
+      );
+    }
+
     const { userId } = await auth();
+
+    if (!userId) {
+      throw new ValidationError("User not authenticated", [
+        {
+          message: "User not authenticated",
+          code: "User_Not_Authenticated",
+        },
+      ]);
+    }
 
     // Insert the new listing into the database
     const { data, error } = await supabase
       .from("listings")
       .insert({
-        ...body,
+        name,
+        category,
+        address,
+        description,
+        ...optionalFields,
         user_id: userId,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -128,6 +160,123 @@ export async function POST(request: NextRequest) {
 
     return createSuccessResponse(data, "Listing created successfully");
   } catch (error) {
+    console.error("API Error:", error);
+    return handleAPIError(error);
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      throw new ValidationError("User not authenticated", [
+        {
+          message: "User not authenticated",
+          code: "User_Not_Authenticated",
+        },
+      ]);
+    }
+
+    const listingId = params.id;
+
+    const { data: existingListing, error: fetchError } = await supabase
+      .from("listings")
+      .select("*")
+      .eq("id", listingId)
+      .eq("user_id", userId)
+      .single();
+
+    if (fetchError || !existingListing) {
+      throw new NotFoundError(
+        "Listing not found or you do not have permission to edit it"
+      );
+    }
+
+    const formData = await request.formData();
+
+    // Extract form fields
+    const fields = Object.fromEntries(formData.entries()) as Record<
+      string,
+      string
+    >;
+    const { name, category, address, description, ...optionalFields } = fields;
+
+    // Validate required field
+    if (!name || !category || !address || !description) {
+      throw new Error(
+        "Missing required fields: name, category, address, and description are required"
+      );
+    }
+
+    const { data, error } = await supabase
+      .from("listings")
+      .update({
+        name,
+        category,
+        address,
+        description,
+        ...optionalFields,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", listingId)
+      .eq("user_id", userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return createSuccessResponse(data, "Listing updated successfully");
+  } catch (error) {
+    console.error("API Error:", error);
+    return handleAPIError(error);
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      throw new ValidationError("User not authenticated", [
+        {
+          message: "User not authenticated",
+          code: "User_Not_Authenticated",
+        },
+      ]);
+    }
+
+    const listingId = params.id;
+
+    const { data, error } = await supabase
+      .from("listings")
+      .delete()
+      .eq("id", listingId)
+      .eq("user_id", userId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data) {
+      throw new NotFoundError(
+        "Listing not found or you do not have permission to delete it"
+      );
+    }
+
+    return createSuccessResponse(data, "Listing deleted successfully");
+  } catch (error) {
+    console.error("API Error:", error);
     return handleAPIError(error);
   }
 }
