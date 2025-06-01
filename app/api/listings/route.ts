@@ -5,20 +5,10 @@ import {
   createSuccessResponse,
   NotFoundError,
   ValidationError,
-  APIError,
 } from "@/utils/api-error";
-import {
-  ListingQuerySchema,
-  CreateListingSchema,
-  IdParamSchema,
-} from "@/utils/validation/schema";
-import {
-  validateSearchParams,
-  validateRequest,
-} from "@/utils/validation/middleware";
+import { ListingQuerySchema } from "@/utils/validation/schema";
+import { validateSearchParams } from "@/utils/validation/middleware";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { Listing } from "@/types/types";
-import { getUploadAuthParams } from "@imagekit/next/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

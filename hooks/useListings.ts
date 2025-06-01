@@ -93,3 +93,46 @@ export function useListingsById(id: string | null) {
 
   return { listing, loading, error, refetch };
 }
+
+export function useListingsByUserId(userId: string) {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchListingsByUserId = useCallback(async () => {
+    if (!userId) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(`/api/listings/${userId}`);
+      const result: APIResponse<Listing[]> = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || `Failed to fetch listings for user: ${userId}`
+        );
+      }
+
+      if (!result.data) {
+        throw new Error("No listings found for this user");
+      }
+
+      setListings(result.data);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "An error occurred";
+      setError(errorMessage);
+      console.error("Error fetching listings by user ID:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchListingsByUserId();
+  }, [fetchListingsByUserId]);
+
+  return { listings, loading, error };
+}

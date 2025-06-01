@@ -15,6 +15,92 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_KEY!
 );
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      throw new ValidationError("User not authenticated", [
+        {
+          message: "User not authenticated",
+          code: "User_Not_Authenticated",
+        },
+      ]);
+    }
+
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "12");
+
+    // Validate pagination parameters
+    if (page < 1) {
+      throw new ValidationError("Page must be greater than 0", [
+        {
+          message: "Page must be greater than 0",
+          code: "Invalid_Page",
+        },
+      ]);
+    }
+
+    if (limit < 1 || limit > 100) {
+      throw new ValidationError("Limit must be between 1 and 100", [
+        {
+          message: "Limit must be between 1 and 100",
+          code: "Invalid_Limit",
+        },
+      ]);
+    }
+
+    const userId = params.id;
+    const isAdmin = user.publicMetadata.role === "admin";
+
+    // Check if user can access these listings
+    if (!isAdmin && userId !== user.id) {
+      throw new ValidationError("Access denied", [
+        {
+          message: "You can only view your own listings",
+          code: "Access_Denied",
+        },
+      ]);
+    }
+
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    // Build query without search
+    const { data, error, count } = await supabase
+      .from("listings")
+      .select("*", { count: "exact" })
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      throw error;
+    }
+
+    const totalPages = Math.ceil((count || 0) / limit);
+
+    return createSuccessResponse({
+      listings: data || [],
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    });
+  } catch (error) {
+    console.error("API Error:", error);
+    return handleAPIError(error);
+  }
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
