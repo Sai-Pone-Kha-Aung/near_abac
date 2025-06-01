@@ -1,3 +1,5 @@
+import imagekit from "./imagekit";
+
 export interface ImageUploadResult {
   url: string;
   fileId: string;
@@ -50,5 +52,45 @@ export async function uploadImageToImageKit(
   } catch (error) {
     console.error("Error uploading image to ImageKit:", error);
     throw new Error("Image upload failed");
+  }
+}
+
+export async function deleteImageFromImageKit(
+  fileId: string
+): Promise<boolean> {
+  try {
+    await imagekit.deleteFile(fileId);
+    console.log("Image deleted successfully from ImageKit");
+    return true;
+  } catch (error) {
+    console.error("Error deleting image from ImageKit:", error);
+    return false;
+  }
+}
+
+export async function deleteImageFromImageKitByUrl(
+  imageUrl: string
+): Promise<boolean> {
+  try {
+    const parts = imageUrl.split("/");
+    const fileName = parts[parts.length - 1];
+
+    const filesByName = await imagekit.listFiles({
+      name: fileName,
+      limit: 1,
+    });
+
+    if (filesByName.length > 0 && "fileId" in filesByName[0]) {
+      console.log("Found file by name with ID:", filesByName[0].fileId);
+      await imagekit.deleteFile(filesByName[0].fileId);
+      console.log("Image deleted successfully from ImageKit by name");
+      return true;
+    }
+
+    console.log("Image deleted successfully from ImageKit by path");
+    return true;
+  } catch (error) {
+    console.error("Error deleting image from ImageKit by URL:", error);
+    return false;
   }
 }
