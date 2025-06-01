@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Image from 'next/image'
 import { uploadImageToImageKit } from '@/lib/image-upload'
+import { useRouter } from 'next/navigation'
 
 type FormData = {
     name: string;
@@ -29,6 +30,7 @@ const AddListing = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const router = useRouter();
 
     const formData: ZodType<FormData> = z.object({
         name: z.string().min(1, { message: "Name is required" }),
@@ -125,6 +127,7 @@ const AddListing = () => {
             const result = await response.json();
             setUploadProgress(100);
             console.log('Form submitted successfully:', result);
+            router.push(`/listing/${result.id}`);
 
         } catch (error) {
             console.error('Error submitting form:', error)

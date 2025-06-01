@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Upload } from 'lucide-react'
+import { ArrowLeft, Delete, Trash, Upload } from 'lucide-react'
 import { z, ZodType } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -94,7 +94,7 @@ const EditListing = ({ listingId }: EditListingProps) => {
         if (listing) {
             reset({
                 name: listing.name || '',
-                category: listing.category || '',
+                category: listing.category,
                 address: listing.address || '',
                 description: listing.description || '',
                 phone: listing.phone || '',
@@ -187,6 +187,26 @@ const EditListing = ({ listingId }: EditListingProps) => {
         }
     }
 
+    const handleDelete = () => {
+        if (confirm('Are you sure you want to delete this listing?')) {
+            // Call API to delete listing
+            fetch(`/api/listings/${listingId}`, {
+                method: 'DELETE',
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete listing');
+                    }
+                    router.push(`/categories/${listing?.category}`);
+                })
+                .catch((error) => {
+                    console.error('Error deleting listing:', error);
+                });
+
+
+        }
+    }
+
     if (loading) {
         return (
             <div className='min-h-screen flex items-center justify-center gap-4'>
@@ -210,10 +230,20 @@ const EditListing = ({ listingId }: EditListingProps) => {
                 <div className='max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6'>
 
                     <div className='mb-6'>
-                        <Link href={`/listing/${listingId}`} className='flex items-center gap-1 text-near-purple hover:text-near-purple-dark transition-colors text-sm mb-4'>
-                            <ArrowLeft className='w-4 h-4' />
-                            <span>Back to Listing</span>
-                        </Link>
+                        <div className='flex items-center justify-between mb-4'>
+                            <Link href={`/listing/${listingId}`} className='flex justify-center items-center gap-1 text-near-purple hover:text-near-purple-dark transition-colors text-sm mb-4'>
+                                <ArrowLeft className='w-4 h-4' />
+                                <span>Back to Listing</span>
+                            </Link>
+
+                            <Button
+                                variant="destructive"
+                                onClick={handleDelete}
+                                size="icon"
+                            >
+                                <Trash className='w-4 h-4' />
+                            </Button>
+                        </div>
                         <h1 className='text-3xl font-bold text-gray-900 mb-4'>Edit Your Listing</h1>
                         <p className='text-gray-600 mb-6'>Update the information for your listing.</p>
                     </div>
@@ -229,7 +259,7 @@ const EditListing = ({ listingId }: EditListingProps) => {
                         <div>
                             <label htmlFor="category" className='block text-sm font-medium text-gray-700 mb-1'>Category <span className='text-red-600'>*</span></label>
                             <Select
-                                value={watch('category')}
+                                defaultValue={listing?.category}
                                 onValueChange={(value) => setValue('category', value, { shouldValidate: true })}
                             >
                                 <SelectTrigger id='category'>

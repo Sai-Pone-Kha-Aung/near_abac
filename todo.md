@@ -10,6 +10,8 @@
 [x] auth
 [x] update hero section
 [x] add the list table on admin page & profile page
+[] Show all listings in admin page
+[] Show all user in admin page
 [] toast
 
 **Backend**
@@ -18,7 +20,8 @@
 [x] setup database
 [x] api CRUD
 [x] integration with clerk
-[] api for add listing and edit
+[x] api for add listing and edit
+[] API for user
 
 **Design**
 [] Database Design

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft, Clock, Edit, ExternalLink, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CategoryIcon } from '@/components/CategoryIcon'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useListingsById } from '@/hooks/useListings'
 import Image from 'next/image'
 import { useUser } from '@clerk/nextjs'
@@ -13,6 +13,7 @@ const Page = () => {
     const { listing, loading } = useListingsById(id as string)
     const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
     const { user } = useUser();
+    const router = useRouter();
 
     if (loading && !listing) {
         return (
@@ -42,14 +43,14 @@ const Page = () => {
         <div className='min-h-screen bg-near-gray flex flex-col'>
             <main className='flex-1 pt-10 pb-16'>
                 <div className='container mx-auto px-4'>
-                    <div className='flex flex-col md:flex-row items-center justify-between mb-6'>
+                    <div className='flex md:items-center gap-4 justify-between mb-6'>
                         <div className='flex items-center mb-2'>
                             <Link href={`/categories/${listing?.category}`} className='flex items-center gap-1 text-near-purple hover:text-near-purple-dark transition-colors text-sm'>
                                 <ArrowLeft className='w-4 h-4' />
                                 <span>Back to {listing?.category ? listing.category.toLocaleUpperCase().charAt(0) + listing.category.slice(1) : 'Category'}</span>
                             </Link>
                         </div>
-                        {(user?.id === listing.user_id || user?.publicMetadata.role === "admin") && <Button variant='outline' className='flex items-center gap-2 bg-near-purple text-white hover:bg-near-purple-dark transition-colors self-start hover:text-white' onClick={() => { window.open(`/edit-listing/${listing.id}`, "_blank") }}>
+                        {(user?.id === listing.user_id || user?.publicMetadata.role === "admin") && <Button variant='outline' className='flex items-center gap-2 bg-near-purple text-white hover:bg-near-purple-dark transition-colors self-start hover:text-white' onClick={() => router.push(`/edit-listing/${listing.id}`)}>
                             <Edit className='w-4 h-4' />
                             <span>Edit listing</span>
                             <ExternalLink className='w-3 h-3' />
@@ -142,9 +143,15 @@ const Page = () => {
                     </div>
 
                     <div className='mt-12'>
+                        <h2 className='text-2xl font-bold my-6'>Reviews</h2>
+                        <div className='text-center text-gray-500 bg-white rounded-xl shadow-md p-8'>
+                            Coming soon!
+                        </div>
+                    </div>
+                    <div className='mt-12'>
                         <h2 className='text-2xl font-bold my-6'>Similar Places Nearby</h2>
                         <div className='text-center text-gray-500 bg-white rounded-xl shadow-md p-8'>
-                            More listings coming soon!
+                            Coming soon!
                         </div>
                     </div>
                 </div>
