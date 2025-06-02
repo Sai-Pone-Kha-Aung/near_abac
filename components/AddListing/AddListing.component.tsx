@@ -128,7 +128,7 @@ const AddListing = () => {
             const result = await response.json();
             setUploadProgress(100);
             console.log('Form submitted successfully:', result);
-            router.push(`/listing/${result.id}`);
+            router.push(`/listing/${result.data.id}`);
 
         } catch (error) {
             const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
