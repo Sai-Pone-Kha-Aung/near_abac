@@ -86,18 +86,18 @@ const Navbar = () => {
                   </div>
                   <DropdownMenuSeparator />
                   {user?.publicMetadata.role === "admin" && (
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className='cursor-pointer'>
                       <Link href="/admin/dashboard">Admin Dashboard</Link>
                     </DropdownMenuItem>
                   )}
                   {(user?.publicMetadata.role === "moderator" || user?.publicMetadata.role === "") && (
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className='cursor-pointer'>
                       <Link href={`/profile/${user.id}`}>My Profile</Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <SignOutButton>
+                  <DropdownMenuItem asChild className='cursor-pointer'>
+                    <SignOutButton >
                       <Link href="/">Log Out</Link>
                     </SignOutButton>
                   </DropdownMenuItem>

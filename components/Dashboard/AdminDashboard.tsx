@@ -2,13 +2,14 @@
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Coffee, Home, ListFilter, Plus, PlusIcon, Utensils } from 'lucide-react'
+import { Coffee, Home, ListFilter, Plus, PlusIcon, RefreshCcw, Trash, Utensils } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { XAxis, YAxis, Tooltip, CartesianGrid, Bar } from 'recharts'
 import Table from 'antd/es/table'
 import { SortOrder } from 'antd/es/table/interface';
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
+import { useUsers } from '@/hooks/useUser'
 
 const ResponsiveContainer = dynamic(() =>
     import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false }
@@ -43,16 +44,24 @@ const categoryData = [
 ];
 
 const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id', defaultSortOrder: 'ascend' as SortOrder, sorter: (a: { id: number }, b: { id: number }) => a.id - b.id },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'ID', dataIndex: 'id', key: 'id', defaultSortOrder: 'ascend' as SortOrder, sorter: (a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id) },
+    { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
+    { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
     { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: 'Role', dataIndex: 'role', key: 'role' },
+    { title: 'Created At', dataIndex: 'created_at', key: 'created_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { created_at: string }, b: { created_at: string }) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime() },
+    { title: 'Updated At', dataIndex: 'updated_at', key: 'updated_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { updated_at: string }, b: { updated_at: string }) => new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime() },
+    {
+        title: 'Actions',
+        key: 'actions',
+        render: (text: any, record: { id: string }) => (
+            <Button size="sm" variant="destructive" onClick={() => console.log(`Delete user ${record.id}`)}>
+                <Trash className='w-4 h-4' />
+            </Button>
+        )
+    }
 ]
 
-const userData = [
-    { id: 1, name: 'John Doe', email: 'johndoe@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'janesmith@example.com' },
-    { id: 3, name: 'Alice Johnson', email: 'alicejohnson@example.com' },
-]
 
 const overview_card: OverviewCardProps[] = [
     {
@@ -77,6 +86,36 @@ const overview_card: OverviewCardProps[] = [
 
 const AdminDashboard = () => {
     const router = useRouter();
+    const { users, loading, error, refetch } = useUsers();
+
+    // const handleDelete = () => {
+    //     if (confirm('Are you sure you want to delete this user?')) {
+    //         // Call API to delete user
+    //         fetch(`/api/users/${users?.id}`, {
+    //             method: 'DELETE',
+    //         })
+    //             .then((response) => {
+    //                 if (!response.ok) {
+    //                     throw new Error('Failed to delete user');
+    //                 }
+    //                 router.push(`/users`);
+    //             })
+    //             .catch((error) => {
+    //                 console.error('Error deleting user:', error);
+    //             });
+
+
+    //     }
+    // }
+
+    if (error) {
+        return <div className='container mx-auto px-4 py-8 text-red-500'>Error loading users: {error}</div>;
+    }
+
+    const handleRefresh = () => {
+        refetch();
+    }
+
     return (
         <div className='flex flex-col bg-white'>
             <div className='flex-grow container mx-auto px-4 py-8 mt-8'>
@@ -96,8 +135,8 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-                    {overview_card.map((card) => (
-                        <Card key={card.title}>
+                    {overview_card.map((card, index) => (
+                        <Card key={index}>
                             <CardHeader className='pb-2'>
                                 <CardTitle className='text-lg'>
                                     {card.title}
@@ -174,8 +213,8 @@ const AdminDashboard = () => {
                             <CardContent>
                                 <div className='flex flex-col'>
                                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                                        {categoryData.map((category) => (
-                                            <Card key={category.name}>
+                                        {categoryData.map((category, index) => (
+                                            <Card key={index}>
                                                 <CardHeader className='pb-2'>
                                                     <div className='flex items-center'>
                                                         {category.icon}
@@ -205,13 +244,20 @@ const AdminDashboard = () => {
                                         Manage all users
                                     </CardDescription>
                                 </div>
-                                <Button size="sm" variant='outline'>
-                                    <PlusIcon className='w-4 h-4 mr-2' />
-                                    Add New User
+                                <Button size="sm" variant='outline' onClick={handleRefresh}>
+                                    <RefreshCcw className='w-4 h-4 mr-2' />
+                                    Refresh Users
                                 </Button>
                             </CardHeader>
-                            <CardContent>
-                                <Table columns={columns} dataSource={userData} showSorterTooltip={{ target: 'sorter-icon' }} />
+                            <CardContent className='overflow-x-auto'>
+                                {loading ? (
+                                    <div className='container mx-auto px-4 py-8'>
+                                        <div className='flex items-center justify-center h-screen'>
+                                            <div className='animate-spin rounded-full h-16 w-16 border-t-2 border-near-purple'></div>
+                                        </div>
+                                        <p className='text-center text-gray-500'>Loading ...</p>
+                                    </div>
+                                ) : (<Table columns={columns} dataSource={users} showSorterTooltip={{ target: 'sorter-icon' }} />)}
                             </CardContent>
                         </Card>
                     </TabsContent>

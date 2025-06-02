@@ -1,4 +1,4 @@
-import imagekit from "./imagekit";
+import imagekit from "@/lib/imagekit";
 
 export interface ImageUploadResult {
   url: string;

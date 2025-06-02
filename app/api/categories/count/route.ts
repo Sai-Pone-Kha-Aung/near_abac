@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import {
+  createSuccessResponse,
+  handleAPIError,
+  NotFoundError,
+} from "@/utils/api-error";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function GET() {
@@ -15,14 +20,11 @@ export async function GET() {
       .not("category", "is", null);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      throw error;
     }
 
     if (!data || data.length === 0) {
-      return NextResponse.json(
-        { error: "No listings found for this category" },
-        { status: 404 }
-      );
+      throw new NotFoundError("No listings found for this category");
     }
 
     //Count Categories
@@ -34,11 +36,11 @@ export async function GET() {
       {}
     );
 
-    return NextResponse.json({ data: categoryCounts });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+    return createSuccessResponse(
+      categoryCounts,
+      "Category counts retrieved successfully"
     );
+  } catch (error) {
+    return handleAPIError(error);
   }
 }
