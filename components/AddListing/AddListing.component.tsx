@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Image from 'next/image'
 import { uploadImageToImageKit } from '@/lib/image-upload'
 import { useRouter } from 'next/navigation'
+import { APIError, handleAPIError } from '@/utils/api-error'
 
 type FormData = {
     name: string;
@@ -130,7 +131,9 @@ const AddListing = () => {
             router.push(`/listing/${result.id}`);
 
         } catch (error) {
-            console.error('Error submitting form:', error)
+            const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
+            handleAPIError(errorMessage);
+            console.error('Error submitting form:', error);
         } finally {
             setIsSubmitting(false);
             setUploadProgress(0);

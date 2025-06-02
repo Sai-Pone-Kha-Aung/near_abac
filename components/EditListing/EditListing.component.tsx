@@ -13,6 +13,7 @@ import { uploadImageToImageKit } from '@/lib/image-upload'
 import { useListingsById } from '@/hooks/useListings'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { APIError, handleAPIError } from '@/utils/api-error'
 
 type FormData = {
     name: string;
@@ -164,7 +165,9 @@ const EditListing = ({ listingId }: EditListingProps) => {
 
             router.push(`/listing/${listingId}`);
         } catch (error) {
-            console.error('Error updating listing:', error)
+            const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
+            handleAPIError(errorMessage);
+            console.error('Error submitting form:', error);
         } finally {
             setIsSubmitting(false);
             setUploadProgress(0);
@@ -200,6 +203,8 @@ const EditListing = ({ listingId }: EditListingProps) => {
                     router.push(`/categories/${listing?.category}`);
                 })
                 .catch((error) => {
+                    const errorMessage = error instanceof APIError ? error.message : 'An error occurred while deleting the listing';
+                    handleAPIError(errorMessage);
                     console.error('Error deleting listing:', error);
                 });
 
