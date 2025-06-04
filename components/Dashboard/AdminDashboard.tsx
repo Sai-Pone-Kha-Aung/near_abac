@@ -2,7 +2,7 @@
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Coffee, Home, ListFilter, Plus, PlusIcon, RefreshCcw, Trash, Utensils } from 'lucide-react'
+import { Coffee, Home, ListFilter, Plus, RefreshCcw, Trash, Utensils } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { XAxis, YAxis, Tooltip, CartesianGrid, Bar } from 'recharts'
 import Table from 'antd/es/table'
@@ -10,6 +10,7 @@ import { SortOrder } from 'antd/es/table/interface';
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useUsers } from '@/hooks/useUser'
+import { usePaginationListings } from '@/hooks/usePaginationListings'
 
 const ResponsiveContainer = dynamic(() =>
     import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false }
@@ -37,12 +38,6 @@ const visitData = [
     { name: 'Sun', visits: 590 },
 ];
 
-const categoryData = [
-    { name: 'Apartments', count: 48, icon: <Home className="h-5 w-5" /> },
-    { name: 'Cafes', count: 32, icon: <Coffee className="h-5 w-5" /> },
-    { name: 'Bakeries', count: 24, icon: <Utensils className="h-5 w-5" /> },
-];
-
 const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id', defaultSortOrder: 'ascend' as SortOrder, sorter: (a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id) },
     { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
@@ -60,6 +55,34 @@ const columns = [
             </Button>
         )
     }
+]
+
+const listingsColumns = [
+    {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+        defaultSortOrder: 'ascend' as SortOrder,
+        sorter: (a: { id: string }, b: { id: string }) => {
+            const numA = parseInt(String(a.id || '0'));
+            const numB = parseInt(String(b.id || '0'));
+            return numA - numB;
+        }
+    },
+    { title: 'User ID', dataIndex: 'user_id', key: 'user_id' },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Category', dataIndex: 'category', key: 'category' },
+    { title: 'Description', dataIndex: 'description', key: 'description' },
+    { title: 'Address', dataIndex: 'address', key: 'address' },
+    { title: 'Phone', dataIndex: 'phone', key: 'phone' },
+    { title: 'Google Map Link', dataIndex: 'google_map_link', key: 'google_map_link' },
+    { title: 'Line ID', dataIndex: 'line_id', key: 'line_id' },
+    { title: 'Facebook URL', dataIndex: 'facebook_url', key: 'facebook_url' },
+    { title: 'Instagram URL', dataIndex: 'instagram_url', key: 'instagram_url' },
+    { title: 'Image URL', dataIndex: 'img_url', key: 'img_url' },
+    { title: 'Distance', dataIndex: 'distance', key: 'distance' },
+    { title: 'Created At', dataIndex: 'created_at', key: 'created_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { created_at: string }, b: { created_at: string }) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime() },
+    { title: 'Updated At', dataIndex: 'updated_at', key: 'updated_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { updated_at: string }, b: { updated_at: string }) => new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime() },
 ]
 
 
@@ -86,27 +109,27 @@ const overview_card: OverviewCardProps[] = [
 
 const AdminDashboard = () => {
     const router = useRouter();
+    const { listings, pagination, setPage } = usePaginationListings();
     const { data: users, isLoading: loading, isError: error, refetch } = useUsers();
 
-    // const handleDelete = () => {
-    //     if (confirm('Are you sure you want to delete this user?')) {
-    //         // Call API to delete user
-    //         fetch(`/api/users/${users?.id}`, {
-    //             method: 'DELETE',
-    //         })
-    //             .then((response) => {
-    //                 if (!response.ok) {
-    //                     throw new Error('Failed to delete user');
-    //                 }
-    //                 router.push(`/users`);
-    //             })
-    //             .catch((error) => {
-    //                 console.error('Error deleting user:', error);
-    //             });
+    const handlePageChange = (newPage: number) => {
+        // Logic to handle page change
+        setPage(newPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
+    const paginationConfig = {
+        current: pagination.page,
+        total: pagination.total,
+        totalPages: pagination.totalPages,
+        showTotal: (total: number, range: [number, number]) =>
+            `${range[0]}-${range[1]} of ${total} items`,
+        onChange: handlePageChange,
+        onShowSizeChange: (current: number, size: number) => {
+            console.log('Page size changed:', current, size);
+        }
+    };
 
-    //     }
-    // }
 
     if (error) {
         return <div className='container mx-auto px-4 py-8 text-red-500'>Error loading users: {error}</div>;
@@ -205,32 +228,17 @@ const AdminDashboard = () => {
                                         Manage all listings
                                     </CardDescription>
                                 </div>
-                                <Button size="sm" variant='outline'>
-                                    <ListFilter className='w-4 h-4 mr-2' />
-                                    View All Listings
-                                </Button>
                             </CardHeader>
-                            <CardContent>
-                                <div className='flex flex-col'>
-                                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                                        {categoryData.map((category, index) => (
-                                            <Card key={index}>
-                                                <CardHeader className='pb-2'>
-                                                    <div className='flex items-center'>
-                                                        {category.icon}
-                                                        <CardTitle className='text-lg ml-2'>{category.name}</CardTitle>
-                                                    </div>
-                                                </CardHeader>
-                                                <CardContent>
-                                                    <div className='text-2xl font-bold'>{category.count}</div>
-                                                    <div className='flex justify-between items-center mt-4'>
-                                                        <Button variant="outline" size="sm">View All</Button>
-                                                        <Button variant="outline" size="sm">Add New</Button>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
-                                    </div>
+                            <CardContent >
+                                <div className='flex flex-col overflow-x-auto p-6'>
+                                    <Table
+                                        columns={listingsColumns}
+                                        dataSource={listings}
+                                        showSorterTooltip={{ target: 'sorter-icon' }}
+                                        pagination={{ ...paginationConfig }}
+                                        rowKey="id"
+                                        scroll={{ x: 'max-content' }}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>

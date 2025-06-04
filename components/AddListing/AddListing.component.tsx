@@ -1,5 +1,5 @@
 "use client"
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -9,10 +9,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Image from 'next/image'
-import { uploadImageToImageKit } from '@/lib/image-upload'
 import { useRouter } from 'next/navigation'
 import { APIError, handleAPIError } from '@/utils/api-error'
 import { useCreateListing } from '@/hooks/useCreateListing'
+import { ToastContainer, toast } from 'react-toastify';
 
 type FormData = {
     name: string;
@@ -45,14 +45,6 @@ const AddListing = () => {
         google_map_link: z.string().optional(),
         line_id: z.string().optional(),
         img_url: z.any()
-            // .refine(
-            //     (file) => {
-            //         // Check if we're in a browser environment
-            //         if (typeof window === 'undefined') return true;
-            //         return file !== null;
-            //     },
-            //     { message: "Image is required" }
-            // )
             .refine(
                 (file) => {
                     // Check if we're in a browser environment
@@ -85,55 +77,20 @@ const AddListing = () => {
 
     const onSubmit = async (data: FormData) => {
         try {
-            // setIsSubmitting(true);
-            // setUploadProgress(10);
-
-            // let imageUrl = '';
-            // let imageFileId = '';
-
-            // if (data.img_url) {
-            //     setUploadProgress(50);
-            //     const uploadResult = await uploadImageToImageKit(data.img_url)
-            //     imageUrl = uploadResult.url;
-            //     imageFileId = uploadResult.fileId;
-            //     setUploadProgress(60);
-            // }
-
-            // const formDataToSubmit = new FormData();
-            // formDataToSubmit.append('name', data.name);
-            // formDataToSubmit.append('category', data.category);
-            // formDataToSubmit.append('address', data.address);
-            // formDataToSubmit.append('description', data.description);
-
-            // if (data.phone) formDataToSubmit.append('phone', data.phone);
-            // if (data.facebook_url) formDataToSubmit.append('facebook_url', data.facebook_url);
-            // if (data.instagram_url) formDataToSubmit.append('instagram_url', data.instagram_url);
-            // if (data.google_map_link) formDataToSubmit.append('google_map_link', data.google_map_link);
-            // if (data.line_id) formDataToSubmit.append('line_id', data.line_id);
-            // if (data.distance) formDataToSubmit.append('distance', data.distance);
-
-            // if (imageUrl) {
-            //     if (data.img_url) formDataToSubmit.append('img_url', imageUrl);
-            // }
-
-            // setUploadProgress(80);
-
-            // const response = await fetch('/api/listings', {
-            //     method: 'POST',
-            //     body: formDataToSubmit,
-            // });
-
-            // if (!response.ok) {
-            //     throw new Error('Failed to submit form');
-            // }
-            // const result = await response.json();
-            // setUploadProgress(100);
-            // console.log('Form submitted successfully:', result);
-            // router.push(`/listing/${result.data.id}`);
-
             const result = await createListingMutation.mutateAsync(data);
+
             console.log('Form submitted successfully:', result);
-            router.push(`/listing/${result.data.id}`);
+            toast.success('Listing created successfully!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setTimeout(() => {
+                router.push(`/listing/${result.data.id}`);
+            }, 3000);
 
         } catch (error) {
             const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';

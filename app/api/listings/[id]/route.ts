@@ -106,6 +106,7 @@ export async function PUT(
 ) {
   try {
     const { userId } = await auth();
+    const user = await currentUser();
 
     if (!userId) {
       throw new ValidationError("User not authenticated", [
@@ -117,17 +118,33 @@ export async function PUT(
     }
 
     const listingId = params.id;
+    const isAdmin = user?.publicMetadata.role === "admin";
 
-    const { data: existingListing, error: fetchError } = await supabase
-      .from("listings")
-      .select("*")
-      .eq("id", listingId)
-      .eq("user_id", userId)
-      .single();
+    // For admins, don't filter by user_id; for regular users, only allow their own listings
+    const query = supabase.from("listings").select("*").eq("id", listingId);
+
+    if (!isAdmin) {
+      query.eq("user_id", userId);
+    }
+
+    const { data: existingListing, error: fetchError } = await query.single();
 
     if (fetchError || !existingListing) {
       throw new NotFoundError(
         "Listing not found or you do not have permission to edit it"
+      );
+    }
+
+    // Additional check for non-admin users
+    if (!isAdmin && existingListing.user_id !== userId) {
+      throw new ValidationError(
+        "You do not have permission to edit this listing",
+        [
+          {
+            message: "You do not have permission to edit this listing",
+            code: "Permission_Denied",
+          },
+        ]
       );
     }
 
@@ -147,7 +164,8 @@ export async function PUT(
       );
     }
 
-    const { data, error } = await supabase
+    // For the update, admins can update any listing, regular users only their own
+    const updateQuery = supabase
       .from("listings")
       .update({
         name,
@@ -157,10 +175,13 @@ export async function PUT(
         ...optionalFields,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", listingId)
-      .eq("user_id", userId)
-      .select()
-      .single();
+      .eq("id", listingId);
+
+    if (!isAdmin) {
+      updateQuery.eq("user_id", userId);
+    }
+
+    const { data, error } = await updateQuery.select().single();
 
     if (error) {
       throw error;
