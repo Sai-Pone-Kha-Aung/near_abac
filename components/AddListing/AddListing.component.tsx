@@ -12,6 +12,7 @@ import Image from 'next/image'
 import { uploadImageToImageKit } from '@/lib/image-upload'
 import { useRouter } from 'next/navigation'
 import { APIError, handleAPIError } from '@/utils/api-error'
+import { useCreateListing } from '@/hooks/useCreateListing'
 
 type FormData = {
     name: string;
@@ -29,9 +30,9 @@ type FormData = {
 
 const AddListing = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null)
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
     const router = useRouter();
+    const createListingMutation = useCreateListing();
+    const isSubmitting = createListingMutation.isPending;
 
     const formData: ZodType<FormData> = z.object({
         name: z.string().min(1, { message: "Name is required" }),
@@ -84,49 +85,53 @@ const AddListing = () => {
 
     const onSubmit = async (data: FormData) => {
         try {
-            setIsSubmitting(true);
-            setUploadProgress(10);
+            // setIsSubmitting(true);
+            // setUploadProgress(10);
 
-            let imageUrl = '';
-            let imageFileId = '';
+            // let imageUrl = '';
+            // let imageFileId = '';
 
-            if (data.img_url) {
-                setUploadProgress(50);
-                const uploadResult = await uploadImageToImageKit(data.img_url)
-                imageUrl = uploadResult.url;
-                imageFileId = uploadResult.fileId;
-                setUploadProgress(60);
-            }
+            // if (data.img_url) {
+            //     setUploadProgress(50);
+            //     const uploadResult = await uploadImageToImageKit(data.img_url)
+            //     imageUrl = uploadResult.url;
+            //     imageFileId = uploadResult.fileId;
+            //     setUploadProgress(60);
+            // }
 
-            const formDataToSubmit = new FormData();
-            formDataToSubmit.append('name', data.name);
-            formDataToSubmit.append('category', data.category);
-            formDataToSubmit.append('address', data.address);
-            formDataToSubmit.append('description', data.description);
+            // const formDataToSubmit = new FormData();
+            // formDataToSubmit.append('name', data.name);
+            // formDataToSubmit.append('category', data.category);
+            // formDataToSubmit.append('address', data.address);
+            // formDataToSubmit.append('description', data.description);
 
-            if (data.phone) formDataToSubmit.append('phone', data.phone);
-            if (data.facebook_url) formDataToSubmit.append('facebook_url', data.facebook_url);
-            if (data.instagram_url) formDataToSubmit.append('instagram_url', data.instagram_url);
-            if (data.google_map_link) formDataToSubmit.append('google_map_link', data.google_map_link);
-            if (data.line_id) formDataToSubmit.append('line_id', data.line_id);
-            if (data.distance) formDataToSubmit.append('distance', data.distance);
+            // if (data.phone) formDataToSubmit.append('phone', data.phone);
+            // if (data.facebook_url) formDataToSubmit.append('facebook_url', data.facebook_url);
+            // if (data.instagram_url) formDataToSubmit.append('instagram_url', data.instagram_url);
+            // if (data.google_map_link) formDataToSubmit.append('google_map_link', data.google_map_link);
+            // if (data.line_id) formDataToSubmit.append('line_id', data.line_id);
+            // if (data.distance) formDataToSubmit.append('distance', data.distance);
 
-            if (imageUrl) {
-                if (data.img_url) formDataToSubmit.append('img_url', imageUrl);
-            }
+            // if (imageUrl) {
+            //     if (data.img_url) formDataToSubmit.append('img_url', imageUrl);
+            // }
 
-            setUploadProgress(80);
+            // setUploadProgress(80);
 
-            const response = await fetch('/api/listings', {
-                method: 'POST',
-                body: formDataToSubmit,
-            });
+            // const response = await fetch('/api/listings', {
+            //     method: 'POST',
+            //     body: formDataToSubmit,
+            // });
 
-            if (!response.ok) {
-                throw new Error('Failed to submit form');
-            }
-            const result = await response.json();
-            setUploadProgress(100);
+            // if (!response.ok) {
+            //     throw new Error('Failed to submit form');
+            // }
+            // const result = await response.json();
+            // setUploadProgress(100);
+            // console.log('Form submitted successfully:', result);
+            // router.push(`/listing/${result.data.id}`);
+
+            const result = await createListingMutation.mutateAsync(data);
             console.log('Form submitted successfully:', result);
             router.push(`/listing/${result.data.id}`);
 
@@ -134,9 +139,6 @@ const AddListing = () => {
             const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
             handleAPIError(errorMessage);
             console.error('Error submitting form:', error);
-        } finally {
-            setIsSubmitting(false);
-            setUploadProgress(0);
         }
     }
 

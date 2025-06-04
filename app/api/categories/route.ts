@@ -47,11 +47,18 @@ export async function GET(request: NextRequest) {
       throw error;
     }
 
-    const uniqueCategories = Array.from(
-      new Set(data.map((item) => item.category))
-    ).map((category) => ({
-      name: category,
-    }));
+    const categoryMap = new Map<string, number>();
+    data.forEach((item) => {
+      const category = item.category;
+      categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+    });
+
+    const uniqueCategories = Array.from(categoryMap.entries()).map(
+      ([name, count]) => ({
+        name,
+        count,
+      })
+    );
 
     return createSuccessResponse(uniqueCategories);
   } catch (error) {

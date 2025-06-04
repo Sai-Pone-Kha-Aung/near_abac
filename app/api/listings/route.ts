@@ -68,6 +68,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (query.distance) {
+      queryBuilder = queryBuilder.ilike("distance", `${query.distance}%`);
+    }
+
     //Apply pagination
     const from = (query.page - 1) * query.limit;
     const to = from + query.limit - 1;

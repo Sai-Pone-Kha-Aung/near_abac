@@ -14,6 +14,7 @@ import { useListingsById } from '@/hooks/useListings'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { APIError, handleAPIError } from '@/utils/api-error'
+import { useDeleteListing, useUpdateListing } from '@/hooks/useUpdateListing'
 
 type FormData = {
     name: string;
@@ -35,12 +36,15 @@ interface EditListingProps {
 
 const EditListing = ({ listingId }: EditListingProps) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null)
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const { listing, loading, error } = useListingsById(listingId);
+    const { data: listing, isLoading: loading, error } = useListingsById(listingId);
     const router = useRouter();
     const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
+
+    const updateListingData = useUpdateListing();
+    const deleteListingData = useDeleteListing();
+    const isSubmitting = updateListingData.isPending;
+
 
     const formData: ZodType<FormData> = z.object({
         name: z.string().min(1, { message: "Name is required" }),
@@ -118,61 +122,67 @@ const EditListing = ({ listingId }: EditListingProps) => {
 
     const onSubmit = async (data: FormData) => {
         try {
-            setIsSubmitting(true);
-            setUploadProgress(10);
-
-            let imageUrl = previewImage || '';
-            let imageFileId = '';
-
-            if (data.img_url && data.img_url instanceof File) {
-                setUploadProgress(50);
-                const uploadResult = await uploadImageToImageKit(data.img_url)
-                imageUrl = uploadResult.url;
-                imageFileId = uploadResult.fileId;
-                setUploadProgress(60);
+            const updateData = {
+                ...data,
+                id: listingId,
             }
 
-            const formDataToSubmit = new FormData();
-            formDataToSubmit.append('name', data.name);
-            formDataToSubmit.append('category', data.category);
-            formDataToSubmit.append('address', data.address);
-            formDataToSubmit.append('description', data.description);
-
-            if (data.phone) formDataToSubmit.append('phone', data.phone);
-            if (data.facebook_url) formDataToSubmit.append('facebook_url', data.facebook_url);
-            if (data.instagram_url) formDataToSubmit.append('instagram_url', data.instagram_url);
-            if (data.google_map_link) formDataToSubmit.append('google_map_link', data.google_map_link);
-            if (data.line_id) formDataToSubmit.append('line_id', data.line_id);
-            if (data.distance) formDataToSubmit.append('distance', data.distance);
-
-            if (imageUrl) {
-                if (data.img_url) formDataToSubmit.append('img_url', imageUrl);
-            }
-
-            setUploadProgress(80);
-
-            const response = await fetch(`/api/listings/${listingId}`, {
-                method: 'PUT',
-                body: formDataToSubmit,
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update listing');
-            }
-            const result = await response.json();
-            setUploadProgress(100);
+            const result = await updateListingData.mutateAsync(updateData);
             console.log('Listing updated successfully:', result);
-
             router.push(`/listing/${listingId}`);
         } catch (error) {
             const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
             handleAPIError(errorMessage);
             console.error('Error submitting form:', error);
-        } finally {
-            setIsSubmitting(false);
-            setUploadProgress(0);
         }
     }
+
+    //     imageUrl = uploadResult.url;
+    //     imageFileId = uploadResult.fileId;
+    //     setUploadProgress(60);
+    // }
+
+    // const formDataToSubmit = new FormData();
+    // formDataToSubmit.append('name', data.name);
+    // formDataToSubmit.append('category', data.category);
+    // formDataToSubmit.append('address', data.address);
+    // formDataToSubmit.append('description', data.description);
+
+    // if (data.phone) formDataToSubmit.append('phone', data.phone);
+    // if (data.facebook_url) formDataToSubmit.append('facebook_url', data.facebook_url);
+    // if (data.instagram_url) formDataToSubmit.append('instagram_url', data.instagram_url);
+    // if (data.google_map_link) formDataToSubmit.append('google_map_link', data.google_map_link);
+    // if (data.line_id) formDataToSubmit.append('line_id', data.line_id);
+    // if (data.distance) formDataToSubmit.append('distance', data.distance);
+
+    // if (imageUrl) {
+    //     if (data.img_url) formDataToSubmit.append('img_url', imageUrl);
+    // }
+
+    // setUploadProgress(80);
+
+    // const response = await fetch(`/api/listings/${listingId}`, {
+    //     method: 'PUT',
+    //     body: formDataToSubmit,
+    // });
+
+    // if (!response.ok) {
+    //     throw new Error('Failed to update listing');
+    // }
+    // const result = await response.json();
+    // setUploadProgress(100);
+    // console.log('Listing updated successfully:', result);
+
+    // router.push(`/listing/${listingId}`);
+    // } catch (error) {
+    //     const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
+    //     handleAPIError(errorMessage);
+    //     console.error('Error submitting form:', error);
+    // } finally {
+    //     setIsSubmitting(false);
+    //     setUploadProgress(0);
+    // }
+    //}
 
     const handleFileClick = () => {
         if (fileInputRef.current) {
@@ -190,24 +200,17 @@ const EditListing = ({ listingId }: EditListingProps) => {
         }
     }
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (confirm('Are you sure you want to delete this listing?')) {
-            // Call API to delete listing
-            fetch(`/api/listings/${listingId}`, {
-                method: 'DELETE',
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete listing');
-                    }
-                    router.push(`/categories/${listing?.category}`);
-                })
-                .catch((error) => {
-                    const errorMessage = error instanceof APIError ? error.message : 'An error occurred while deleting the listing';
-                    handleAPIError(errorMessage);
-                    console.error('Error deleting listing:', error);
-                });
+            try {
+                await deleteListingData.mutateAsync(listingId);
 
+                router.push(`/categories/${listing?.category}`);
+            } catch (error) {
+                const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
+                handleAPIError(errorMessage);
+                console.error('Error deleting listing:', error);
+            }
 
         }
     }

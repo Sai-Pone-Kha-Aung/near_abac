@@ -3,7 +3,7 @@ import FeatureSection from './FeatureSection'
 import { useListings } from '@/hooks/useListings'
 
 const FeaturedListing = () => {
-    const { listings } = useListings(true)
+    const { data: listings } = useListings(true);
     const apartmentListings = listings?.filter(listing => listing.category === 'apartment-condo').slice(0, 4) || [];
     const restaurants = listings?.filter(listing => listing.category === 'restaurant').slice(0, 4) || [];
     const cafeListings = listings?.filter(listing => listing.category === 'cafe').slice(0, 4) || [];

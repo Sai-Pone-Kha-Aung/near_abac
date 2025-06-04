@@ -10,12 +10,12 @@ import { useUser } from '@clerk/nextjs'
 
 const Page = () => {
     const { id } = useParams();
-    const { listing, loading } = useListingsById(id as string)
+    const { data: listing, isLoading } = useListingsById(id as string)
     const imageKitEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_URL_ENDPOINT;
     const { user } = useUser();
     const router = useRouter();
 
-    if (loading && !listing) {
+    if (isLoading && !listing) {
         return (
             <div className='min-h-screen flex items-center justify-center gap-2'>
                 <div className='animate-spin rounded-full h-16 w-16 border-t-2 border-near-purple'></div>
