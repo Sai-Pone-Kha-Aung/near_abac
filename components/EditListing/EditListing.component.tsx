@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { APIError, handleAPIError } from '@/utils/api-error'
 import { useDeleteListing, useUpdateListing } from '@/hooks/useUpdateListing'
+import { toast, ToastContainer } from 'react-toastify'
 
 type FormData = {
     name: string;
@@ -57,14 +58,6 @@ const EditListing = ({ listingId }: EditListingProps) => {
         google_map_link: z.string().optional(),
         line_id: z.string().optional(),
         img_url: z.any()
-            // .refine(
-            //     (file) => {
-            //         // Check if we're in a browser environment
-            //         if (typeof window === 'undefined') return true;
-            //         return file !== null;
-            //     },
-            //     { message: "Image is required" }
-            // )
             .refine(
                 (file) => {
                     // Check if we're in a browser environment
@@ -128,61 +121,23 @@ const EditListing = ({ listingId }: EditListingProps) => {
             }
 
             const result = await updateListingData.mutateAsync(updateData);
-            console.log('Listing updated successfully:', result);
-            router.push(`/listing/${listingId}`);
+            toast.success('Listing updated successfully!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setTimeout(() => {
+                router.push(`/listing/${listingId}`);
+            }, 3000);
         } catch (error) {
             const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
             handleAPIError(errorMessage);
             console.error('Error submitting form:', error);
         }
     }
-
-    //     imageUrl = uploadResult.url;
-    //     imageFileId = uploadResult.fileId;
-    //     setUploadProgress(60);
-    // }
-
-    // const formDataToSubmit = new FormData();
-    // formDataToSubmit.append('name', data.name);
-    // formDataToSubmit.append('category', data.category);
-    // formDataToSubmit.append('address', data.address);
-    // formDataToSubmit.append('description', data.description);
-
-    // if (data.phone) formDataToSubmit.append('phone', data.phone);
-    // if (data.facebook_url) formDataToSubmit.append('facebook_url', data.facebook_url);
-    // if (data.instagram_url) formDataToSubmit.append('instagram_url', data.instagram_url);
-    // if (data.google_map_link) formDataToSubmit.append('google_map_link', data.google_map_link);
-    // if (data.line_id) formDataToSubmit.append('line_id', data.line_id);
-    // if (data.distance) formDataToSubmit.append('distance', data.distance);
-
-    // if (imageUrl) {
-    //     if (data.img_url) formDataToSubmit.append('img_url', imageUrl);
-    // }
-
-    // setUploadProgress(80);
-
-    // const response = await fetch(`/api/listings/${listingId}`, {
-    //     method: 'PUT',
-    //     body: formDataToSubmit,
-    // });
-
-    // if (!response.ok) {
-    //     throw new Error('Failed to update listing');
-    // }
-    // const result = await response.json();
-    // setUploadProgress(100);
-    // console.log('Listing updated successfully:', result);
-
-    // router.push(`/listing/${listingId}`);
-    // } catch (error) {
-    //     const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
-    //     handleAPIError(errorMessage);
-    //     console.error('Error submitting form:', error);
-    // } finally {
-    //     setIsSubmitting(false);
-    //     setUploadProgress(0);
-    // }
-    //}
 
     const handleFileClick = () => {
         if (fileInputRef.current) {
@@ -390,6 +345,7 @@ const EditListing = ({ listingId }: EditListingProps) => {
                     </form>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     )
 }

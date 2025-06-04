@@ -10,9 +10,9 @@
 [x] auth
 [x] update hero section
 [x] add the list table on admin page & profile page
-[] Show all listings in admin page
+[x] Show all listings in admin page
 [x] Show all user in admin page
-[] integrate with tanstack query
+[x] integrate with tanstack query
 [] toast
 
 **Backend**

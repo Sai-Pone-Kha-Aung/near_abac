@@ -1,5 +1,5 @@
 "use client"
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { MapPin, Instagram, Facebook, Mail, Phone } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -12,20 +12,9 @@ const links = [
 ]
 
 const Footer = () => {
-    // Pre-calculated year to prevent layout shift
-    const currentYear = useMemo(() => {
-        if (typeof window !== 'undefined') {
-            return new Date().getFullYear()
-        }
-        return 2024 // Fallback for SSR
-    }, [])
-
-    const [isHydrated, setIsHydrated] = useState(false)
+    // Fix: Use consistent year - remove hydration check
+    const currentYear = 2025
     const [emailValue, setEmailValue] = useState('')
-
-    useEffect(() => {
-        setIsHydrated(true)
-    }, [])
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -36,18 +25,16 @@ const Footer = () => {
 
     return (
         <footer
-            className='bg-gray-900 text-white pt-16 pb-8'
+            className='bg-gray-900 text-white py-12'
             style={{
                 minHeight: '400px',
                 contain: 'layout style',
-                contentVisibility: 'auto',
-                containIntrinsicSize: '100% 400px'
             }}
         >
             <div className='container mx-auto px-4'>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12'>
                     {/* About Section */}
-                    <div className='flex flex-col gap-4' style={{ minHeight: '200px' }}>
+                    <div className='flex flex-col gap-4 min-h-[200px]'>
                         <div className='flex items-center h-8'>
                             <Link href="/" className="flex items-center gap-2 text-xl font-bold text-white">
                                 <MapPin className="h-7 w-7 text-near-purple flex-shrink-0" />
@@ -79,7 +66,7 @@ const Footer = () => {
                     </div>
 
                     {/* Quick Links */}
-                    <nav style={{ minHeight: '200px' }}>
+                    <nav className='flex flex-col gap-4 min-h-[200px]'>
                         <h3 className='text-lg font-medium mb-4 h-7'>Quick Links</h3>
                         <div className='flex flex-col gap-2'>
                             {links.map((link) => (
@@ -95,7 +82,7 @@ const Footer = () => {
                     </nav>
 
                     {/* Contact Section */}
-                    <div style={{ minHeight: '200px' }}>
+                    <div className='min-h-[200px]'>
                         <h3 className="text-lg font-medium mb-4 h-7">Contact Us</h3>
                         <ul className="space-y-3">
                             <li className="flex items-start gap-3 min-h-[60px]">
@@ -126,7 +113,7 @@ const Footer = () => {
                     </div>
 
                     {/* Newsletter Section */}
-                    <div style={{ minHeight: '200px' }}>
+                    <div className='min-h-[200px]'>
                         <h3 className="text-lg font-medium mb-4 h-7">Stay Updated</h3>
                         <p className='text-gray-400 mb-4 leading-relaxed'>
                             Subscribe to our newsletter to get the latest updates about places near ABAC.
@@ -139,12 +126,10 @@ const Footer = () => {
                                 onChange={(e) => setEmailValue(e.target.value)}
                                 className='px-4 py-2 rounded-l-md outline-none text-gray-800 flex-1 min-w-0 h-10 text-sm'
                                 required
-                                style={{ width: '60%' }}
                             />
                             <Button
                                 type="submit"
-                                className='bg-near-purple hover:bg-near-purple-dark px-4 py-2 rounded-none rounded-r-md transition-colors whitespace-nowrap h-10 text-sm flex-shrink-0'
-                                style={{ width: '40%', minWidth: '80px' }}
+                                className='bg-near-purple hover:bg-near-purple-dark px-4 py-2 rounded-none rounded-r-md transition-colors whitespace-nowrap h-10 text-sm flex-shrink-0 min-w-[80px]'
                             >
                                 Subscribe
                             </Button>
@@ -152,10 +137,10 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Footer Bottom */}
-                <div className='border-t border-gray-800 pt-8 text-center text-gray-500 text-sm' style={{ minHeight: '80px' }}>
+                {/* Footer Bottom - Fix: Remove hydration check */}
+                <div className='border-t border-gray-800 pt-8 text-center text-gray-500 text-sm min-h-[80px]'>
                     <p className="mb-2">
-                        © {isHydrated ? currentYear : '2024'} NEAR ABAC. All rights reserved.
+                        © {currentYear} NEAR ABAC. All rights reserved.
                     </p>
                     <div className="space-x-4">
                         <Link href="#" className="hover:text-gray-400 transition-colors">

@@ -1,6 +1,5 @@
 import { APIResponse, User } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect, useCallback } from "react";
 
 async function fetchUser(): Promise<User[]> {
   try {
