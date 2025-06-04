@@ -12,11 +12,11 @@ import { usePaginationListings } from '@/hooks/usePaginationListings'
 
 const Page = () => {
   const slug = useParams().slug as string;
-  const { categories } = useCategories();
-  const { listings, loading, error, pagination, setPage, setSearchTerm, searchTerm } = usePaginationListings(slug, 12);
+  const { data: categories } = useCategories();
+  const { listings, loading, error, pagination, setPage, setSearchTerm, searchTerm, setDistance, distance } = usePaginationListings(slug, 12);
   const [inputValue, setInputValue] = useState('');
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
-  const category = categories.find(cat => cat.name === slug)
+  const category = categories?.find(cat => cat.name === slug)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -42,6 +42,43 @@ const Page = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newInputValue = e.target.value;
+    setInputValue(newInputValue);
+
+    if (searchTerm) {
+      clearTimeout(searchTerm);
+    }
+
+    const timeout = setTimeout(() => {
+      setSearchTerm(newInputValue);
+      setPage(1);
+    }, 500);
+
+    setSearchTimeout(timeout);
+  }
+
+  const handleDistanceChange = (value: string) => {
+    setDistance(value);
+    setPage(1);
+  }
+
+  const handleSelectChange = (value: string) => {
+    if (value) {
+      handleDistanceChange(value);
+    } else {
+      setDistance('');
+      setPage(1);
+    }
+  }
+
+  const clearAllFilters = () => {
+    setInputValue('');
+    setSearchTerm('');
+    setDistance('');
+    setPage(1);
+  };
+
   const generatePageNumbers = () => {
     const pages = [];
     const { page, totalPages } = pagination;
@@ -60,22 +97,6 @@ const Page = () => {
       pages.push(totalPages);
     }
     return pages;
-  }
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newInputValue = e.target.value;
-    setInputValue(newInputValue);
-
-    if (searchTerm) {
-      clearTimeout(searchTerm);
-    }
-
-    const timeout = setTimeout(() => {
-      setSearchTerm(newInputValue);
-      setPage(1);
-    }, 500);
-
-    setSearchTimeout(timeout);
   }
 
   return (
@@ -110,16 +131,24 @@ const Page = () => {
           </div>
 
           <div className='bg-white rounded-xl shadow-sm p-4 mt-6'>
-            <div className='flex flex-col md:flex-row gap-4 '>
+            <div className='flex flex-col md:flex-row gap-4 items-center'>
               <div className='relative flex-1'>
                 <Search className='absolute w-4 h-4 left-3 top-1/2 transform -translate-y-1/2 text-gray-500' />
-                <input type="text" placeholder="Search by name" className="w-full pl-10 border border-gray-200 rounded-md pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-near-purple/20 focus:border-near-purple/20" value={inputValue} onChange={handleSearchChange} />
+                <input
+                  type="text"
+                  placeholder="Search by name"
+                  className="w-full pl-10 border border-gray-200 rounded-md pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-near-purple/20 focus:border-near-purple/20"
+                  value={inputValue}
+                  onChange={handleSearchChange} />
               </div>
               <div className='flex-shrink-0 flex items-center gap-4'>
                 <Filter className='text-gray-500 w-4 h-4' />
                 <span className='text-gray-500 text-sm'>Distance:</span>
-                <Select>
-                  <SelectTrigger className='foucs:outline-none focus:ring-2 focus:ring-near-purple/20 focus:border-near-purple/20'>
+                <Select
+                  value={distance}
+                  onValueChange={handleSelectChange}
+                >
+                  <SelectTrigger className='focus:outline-none focus:ring-2 focus:ring-near-purple/20 focus:border-near-purple/20'>
                     <SelectValue placeholder='Select distance' />
                   </SelectTrigger>
                   <SelectContent>
@@ -131,6 +160,9 @@ const Page = () => {
                   </SelectContent>
                 </Select>
               </div>
+              <Button onClick={clearAllFilters} variant="outline" className='flex items-center justify-center'>
+                Clear Filters
+              </Button>
             </div>
           </div>
 
@@ -208,7 +240,7 @@ const Page = () => {
                 No results found
               </h3>
               <p className='mb-4'>Try changing your search</p>
-              <Button className=''>
+              <Button onClick={clearAllFilters}>
                 Clear all filters
               </Button>
             </div>

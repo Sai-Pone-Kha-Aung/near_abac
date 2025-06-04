@@ -5,30 +5,30 @@ import { ArrowLeft, Grid3X3, List } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { CategoryIcon } from '@/components/CategoryIcon'
-import { useCategories, useCategoryCounts } from '@/hooks/useCategories'
+import { useCategories } from '@/hooks/useCategories'
 
 const CategoriesPage = () => {
-    const { categories, loading: categoriesLoading, error } = useCategories();
-    const { categoryCounts, loading: countsLoading } = useCategoryCounts();
+    const { data: categories, isLoading: categoriesLoading, isError: error } = useCategories();
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-    const categoriesWithCount = useMemo(() => {
-        return categories.map(category => ({
-            ...category,
-            count: categoryCounts[category.name] || 0
-        }))
-    }, [categories, categoryCounts]);
+    // const categoriesWithCount = useMemo(() => {
+    //     return categories.map(category => ({
+    //         ...category,
+    //         count: categoryCounts[category.name] || 0
+    //     }))
+    // }, [categories, categoryCounts]);
 
     const sortedCategories = useMemo(() => {
-        return categoriesWithCount.sort((a, b) => {
+        if (!categories) return [];
+        return categories.sort((a, b) => {
             if (a.name === b.name) {
                 return a.count - b.count;
             }
             return a.name.localeCompare(b.name);
         });
-    }, [categoriesWithCount]);
+    }, [categories]);
 
-    const loading = categoriesLoading || countsLoading;
+    const loading = categoriesLoading;
 
     if (loading) {
         return <div className='container mx-auto px-4 py-8'>

@@ -5,10 +5,10 @@ import { MapPin, Instagram, Facebook, Mail, Phone } from 'lucide-react'
 import { Button } from '../ui/button'
 
 const links = [
-    { id: 1, title: "Apartments", url: "/apartments" },
-    { id: 2, title: "Restaurants", url: "/restaurants" },
-    { id: 3, title: "Cafes", url: "/cafes" },
-    { id: 4, title: "Shopping", url: "/shopping" },
+    { id: 1, title: "Apartments", url: "/categories/apartment-condo" },
+    { id: 2, title: "Restaurants", url: "/categories/restaurant" },
+    { id: 3, title: "Cafes", url: "/categories/cafe" },
+    { id: 4, title: "Shopping", url: "/categories/shopping" },
 ]
 
 const Footer = () => {
@@ -119,7 +119,7 @@ const Footer = () => {
                                     href="tel:+6623004543"
                                     className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    +66 2 300 4543
+                                    +66 9 6278 0348
                                 </Link>
                             </li>
                         </ul>

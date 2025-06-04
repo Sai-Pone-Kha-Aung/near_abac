@@ -66,6 +66,7 @@ export const ListingQuerySchema = z.object({
   id: z.string().optional(),
   category: z.string().optional(),
   search: z.string().optional(),
+  distance: z.string().optional(),
   page: z
     .string()
     .optional()

@@ -3,29 +3,29 @@ import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils';
-import { useCategories, useCategoryCounts } from '@/hooks/useCategories';
+import { useCategories } from '@/hooks/useCategories';
 import { CategoryIcon } from '@/components/CategoryIcon';
 
 const Categories = () => {
-    const { categories } = useCategories();
+    const { data: categories } = useCategories();
     const [isVisible, setIsVisible] = useState(false);
-    const { categoryCounts } = useCategoryCounts();
 
-    const categoriesWithCount = useMemo(() => {
-        return categories.map(category => ({
-            ...category,
-            count: categoryCounts[category.name] || 0
-        }))
-    }, [categories, categoryCounts]);
+    // const categoriesWithCount = useMemo(() => {
+    //     return categories.map(category => ({
+    //         ...category,
+    //         count: categoryCounts[category.name] || 0
+    //     }))
+    // }, [categories, categoryCounts]);
 
     const sortedCategories = useMemo(() => {
-        return categoriesWithCount.sort((a, b) => {
+        if (!categories) return [];
+        return categories.sort((a, b) => {
             if (a.name === b.name) {
                 return a.count - b.count;
             }
             return a.name.localeCompare(b.name);
         });
-    }, [categoriesWithCount]);
+    }, [categories]);
 
     useEffect(() => {
         const observer = new IntersectionObserver((

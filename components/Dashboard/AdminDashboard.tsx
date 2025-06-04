@@ -86,7 +86,7 @@ const overview_card: OverviewCardProps[] = [
 
 const AdminDashboard = () => {
     const router = useRouter();
-    const { users, loading, error, refetch } = useUsers();
+    const { data: users, isLoading: loading, isError: error, refetch } = useUsers();
 
     // const handleDelete = () => {
     //     if (confirm('Are you sure you want to delete this user?')) {

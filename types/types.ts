@@ -28,6 +28,7 @@ export interface Listing {
 
 export interface Category {
   name: string;
+  count: number;
 }
 
 export interface APIResponse<T = any> {
