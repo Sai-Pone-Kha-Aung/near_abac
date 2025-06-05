@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/Navbar/Navbar";
-import Footer from "@/components/Footer/Footer";
 import { ViewTransitions } from "next-view-transitions";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { QueryProvider } from "@/components/Provider/QueryProvider";
+import dynamic from "next/dynamic";
+
+const Footer = dynamic(() => import('@/components/Footer/Footer'), {
+  ssr: false,
+})
+const Navbar = dynamic(() => import('@/components/Navbar/Navbar'), {
+  ssr: false,
+})
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,11 +43,9 @@ export default function RootLayout({
           )}>
             <QueryProvider>
               <Navbar />
-              <main className="flex-1">
-                {children}
-              </main>
+              {children}
+              <Footer />
             </QueryProvider>
-            <Footer />
           </body>
         </html>
       </ViewTransitions>

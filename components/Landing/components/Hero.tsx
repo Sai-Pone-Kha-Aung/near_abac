@@ -23,9 +23,13 @@ const Hero = () => {
                     alt='heroimage'
                     onLoad={() => setIsLoaded(true)}
                     className={`w-full h-full object-cover backdrop:blur-sm`}
+                    blurDataURL={`${imageKitEndpoint}/heroimg.jpg?tr=w-10,h-10,cm-extract`}
                     width={1920}
                     height={1080}
                     priority
+                    fetchPriority='high'
+                    sizes='100vw'
+                    placeholder='blur'
                 />
             </div>
 

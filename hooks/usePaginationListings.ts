@@ -211,6 +211,7 @@ export function usePaginationListingsByUserId(
     nextPage,
     previousPage,
     updateLimit,
+    setPage,
     refetch,
   };
 }

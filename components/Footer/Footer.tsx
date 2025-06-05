@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { MapPin, Instagram, Facebook, Mail, Phone } from 'lucide-react'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 
 const links = [
     { id: 1, title: "Apartments", url: "/categories/apartment-condo" },

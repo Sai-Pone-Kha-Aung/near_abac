@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react'
 import { Link } from 'next-view-transitions'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button';
 import { MapPin } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
 import { SignOutButton, useUser } from '@clerk/nextjs';

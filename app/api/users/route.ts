@@ -8,11 +8,9 @@ import {
   APIError,
 } from "@/utils/api-error";
 import { currentUser } from "@clerk/nextjs/server";
+import { createAdminClient } from "@/utils/supabase/client";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = createAdminClient();
 
 export async function GET(request: NextRequest) {
   try {
