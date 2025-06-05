@@ -1,26 +1,66 @@
 "use client"
-import React from 'react'
+import React, { Suspense, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { ArrowUpDown, Edit, Eye, Plus, RefreshCcw, Trash } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { XAxis, YAxis, Tooltip, CartesianGrid, Bar } from 'recharts'
-import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useUsers } from '@/hooks/useUser'
 import { usePaginationListings } from '@/hooks/usePaginationListings'
-import CustomTable from '@/components/Table/Custom-Table'
-import { ColumnDef } from '@tanstack/react-table'
-import { Listing } from '@/types/types'
+import { useListingColumns } from '@/components/Dashboard/hooks/useListingColumns'
+import dynamic from 'next/dynamic'
 
-const ResponsiveContainer = dynamic(() =>
-    import('recharts').then((mod) => mod.ResponsiveContainer), {
-    ssr: false
-}
-);
-const BarChart = dynamic(() =>
-    import('recharts').then((mod) => mod.BarChart), { ssr: false }
-);
+// Dynamic imports for tab components
+const AnalyticsTab = dynamic(() => import('@/components/Dashboard/components/AnalyticsTab'), {
+    ssr: false,
+    loading: () => (
+        <Card>
+            <CardHeader>
+                <div className="animate-pulse">
+                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <div className="h-80 bg-gray-300 rounded animate-pulse"></div>
+            </CardContent>
+        </Card>
+    )
+})
+
+const ListingsTab = dynamic(() => import('@/components/Dashboard/components/ListingTab'), {
+    ssr: false,
+    loading: () => (
+        <div className="p-6">
+            <div className="animate-pulse">
+                <div className="h-8 bg-gray-300 rounded mb-4"></div>
+                <div className="h-4 bg-gray-300 rounded mb-6 w-1/3"></div>
+                <div className="space-y-4">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="h-12 bg-gray-300 rounded"></div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+})
+
+const UsersTab = dynamic(() => import('@/components/Dashboard/components/UserTab'), {
+    ssr: false,
+    loading: () => (
+        <Card>
+            <CardHeader>
+                <div className="animate-pulse">
+                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                </div>
+            </CardHeader>
+            <CardContent>
+                <div className="h-32 bg-gray-300 rounded animate-pulse"></div>
+            </CardContent>
+        </Card>
+    )
+})
 
 type OverviewCardProps = {
     title: string
@@ -28,18 +68,6 @@ type OverviewCardProps = {
     value: number
     review: string
 }
-
-// Mock data 
-
-const visitData = [
-    { name: 'Mon', visits: 320 },
-    { name: 'Tue', visits: 480 },
-    { name: 'Wed', visits: 590 },
-    { name: 'Thu', visits: 430 },
-    { name: 'Fri', visits: 620 },
-    { name: 'Sat', visits: 780 },
-    { name: 'Sun', visits: 590 },
-];
 
 const overview_card: OverviewCardProps[] = [
     {
@@ -62,119 +90,34 @@ const overview_card: OverviewCardProps[] = [
     }
 ]
 
-
 const AdminDashboard = () => {
-    const router = useRouter();
-    const { listings, pagination, setPage, loading: listingsLoading } = usePaginationListings();
-    const { data: users, isLoading: loading, isError: error, refetch } = useUsers();
-    const listingColumns: ColumnDef<Listing>[] = [
-        {
-            accessorKey: "id",
-            header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    ID <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            ),
-        },
-        {
-            accessorKey: "name",
-            header: "Name",
-            cell: ({ row }) => {
-                const listing = row.original
-                return (
-                    <div
-                        className="font-medium cursor-pointer hover:text-near-purple"
-                        onClick={() => router.push(`/listing/${listing.id}`)}
-                    >
-                        {listing.name}
-                    </div>
-                )
-            },
-        },
-        {
-            accessorKey: "category",
-            header: "Category",
-            cell: ({ row }) => {
-                const category = row.getValue("category") as string
-                return (
-                    //   <Badge variant="outline" className="capitalize">
-                    //     {category.replace('-', ' ')}
-                    //   </Badge>
-                    <>
-                        {category.replace('-', ' ')}
-                    </>
-                )
-            },
-        },
-        {
-            accessorKey: "description",
-            header: "Description",
-            cell: ({ row }) => (
-                <div className="max-w-[200px] truncate">
-                    {row.getValue("description")}
-                </div>
-            ),
-        },
-        {
-            accessorKey: "address",
-            header: "Address",
-            cell: ({ row }) => (
-                <div className="max-w-[150px] truncate">
-                    {row.getValue("address")}
-                </div>
-            ),
-        },
-        {
-            accessorKey: "distance",
-            header: "Distance",
-        },
-        {
-            accessorKey: "created_at",
-            header: ({ column }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Created <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
-            ),
-            cell: ({ row }) => {
-                const date = new Date(row.getValue("created_at"))
-                return date.toLocaleDateString()
-            },
-        },
-        {
-            id: "actions",
-            cell: ({ row }) => {
-                const listing = row.original
-                return (
-                    <div className="flex items-center gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.push(`/listing/${listing.id}`)}
-                        >
-                            <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.push(`/edit-listing/${listing.id}`)}
-                        >
-                            <Edit className="h-4 w-4" />
-                        </Button>
-                    </div>
-                )
-            },
-        },
-    ]
+    const router = useRouter()
+    const [activeTab, setActiveTab] = useState('analytics')
+
+    // Only load data for active tabs
+    const shouldLoadListings = activeTab === 'listings'
+    const shouldLoadUsers = activeTab === 'users'
+
+    // Conditionally load hooks based on active tab
+    const {
+        listings,
+        pagination,
+        setPage,
+        loading: listingsLoading
+    } = usePaginationListings(undefined, 12, shouldLoadListings)
+
+    const {
+        data: users,
+        isLoading: loading,
+        isError: error,
+        refetch
+    } = useUsers(shouldLoadUsers)
+
+    const listingColumns = useListingColumns()
+
     const handlePageChange = (newPage: number) => {
-        // Logic to handle page change
-        setPage(newPage);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setPage(newPage)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     const paginationConfig = {
@@ -186,17 +129,16 @@ const AdminDashboard = () => {
             `${range[0]}-${range[1]} of ${total} items`,
         onChange: handlePageChange,
         onShowSizeChange: (current: number, size: number) => {
-            console.log('Page size changed:', current, size);
+            console.log('Page size changed:', current, size)
         }
-    };
-
+    }
 
     if (error) {
-        return <div className='container mx-auto px-4 py-8 text-red-500'>Error loading users: {error}</div>;
+        return <div className='container mx-auto px-4 py-8 text-red-500'>Error loading users: {error}</div>
     }
 
     const handleRefresh = () => {
-        refetch();
+        refetch()
     }
 
     return (
@@ -208,7 +150,9 @@ const AdminDashboard = () => {
                         <p className='text-sm text-gray-500'>Manage your listings and analytics</p>
                     </div>
                     <div className='mt-4 md:mt-0'>
-                        <Button size="sm" className='bg-near-purple text-white rounded-md px-4 py-2 flex items-center gap-2'
+                        <Button
+                            size="sm"
+                            className='bg-near-purple text-white rounded-md px-4 py-2 flex items-center gap-2'
                             onClick={() => router.push('/add-listing')}
                         >
                             <Plus className='w-4 h-4' />
@@ -236,7 +180,7 @@ const AdminDashboard = () => {
                     ))}
                 </div>
 
-                <Tabs defaultValue='analytics' className='mb-8'>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className='mb-8'>
                     <TabsList className='mb-6'>
                         <TabsTrigger value='analytics'>
                             Analytics
@@ -248,81 +192,67 @@ const AdminDashboard = () => {
                             Users
                         </TabsTrigger>
                     </TabsList>
-                    <TabsContent value='analytics'>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Weekly Visits</CardTitle>
-                                <CardDescription>
-                                    Numbers of visits per day
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className='h-80'>
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart
-                                            data={visitData}
-                                            margin={{
-                                                top: 5,
-                                                right: 30,
-                                                left: 20,
-                                                bottom: 5,
-                                            }}
-                                        >
-                                            <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="name" />
-                                            <YAxis />
-                                            <Tooltip />
-                                            <Bar dataKey="visits" fill="#8884d8" />
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                    <TabsContent value='listings'>
-                        <div>
-                            <CustomTable
-                                columns={listingColumns}
-                                data={listings}
-                                title="Listings"
-                                description="Manage all listings"
-                                showAddButton={false}
-                                searchKey="name"
-                                searchPlaceholder="Search listings..."
-                                pageSize={12}
-                                serverSidePagination={true}
-                                paginationConfig={paginationConfig}
 
-                            />
-                        </div>
-                    </TabsContent>
-                    <TabsContent value='users'>
-                        <Card>
-                            <CardHeader className='flex flex-col md:flex-row justify-between items-start md:items-center'>
-                                <div className='mb-2 md:mb-0'>
-                                    <CardTitle className='mb-1'>All Users</CardTitle>
-                                    <CardDescription>
-                                        Manage all users
-                                    </CardDescription>
-                                </div>
-                                <Button size="sm" variant='outline' onClick={handleRefresh}>
-                                    <RefreshCcw className='w-4 h-4 mr-2' />
-                                    Refresh Users
-                                </Button>
-                            </CardHeader>
-                            <CardContent className='overflow-x-auto'>
-                                {loading ? (
-                                    <div className='container mx-auto px-4 py-8'>
-                                        <div className='flex items-center justify-center h-screen'>
-                                            <div className='animate-spin rounded-full h-16 w-16 border-t-2 border-near-purple'></div>
-                                        </div>
-                                        <p className='text-center text-gray-500'>Loading ...</p>
+                    <TabsContent value='analytics'>
+                        <Suspense fallback={
+                            <Card>
+                                <CardHeader>
+                                    <div className="animate-pulse">
+                                        <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                                        <div className="h-4 bg-gray-300 rounded w-1/2"></div>
                                     </div>
-                                ) : (<>
-                                    Table
-                                </>)}
-                            </CardContent>
-                        </Card>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="h-80 bg-gray-300 rounded animate-pulse"></div>
+                                </CardContent>
+                            </Card>
+                        }>
+                            <AnalyticsTab />
+                        </Suspense>
+                    </TabsContent>
+
+                    <TabsContent value='listings'>
+                        <Suspense fallback={
+                            <div className="p-6">
+                                <div className="animate-pulse">
+                                    <div className="h-8 bg-gray-300 rounded mb-4"></div>
+                                    <div className="h-4 bg-gray-300 rounded mb-6 w-1/3"></div>
+                                    <div className="space-y-4">
+                                        {[...Array(5)].map((_, i) => (
+                                            <div key={i} className="h-12 bg-gray-300 rounded"></div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        }>
+                            <ListingsTab
+                                listings={listings}
+                                paginationConfig={paginationConfig}
+                                listingColumns={listingColumns}
+                            />
+                        </Suspense>
+                    </TabsContent>
+
+                    <TabsContent value='users'>
+                        <Suspense fallback={
+                            <Card>
+                                <CardHeader>
+                                    <div className="animate-pulse">
+                                        <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                                        <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="h-32 bg-gray-300 rounded animate-pulse"></div>
+                                </CardContent>
+                            </Card>
+                        }>
+                            <UsersTab
+                                users={users || []}
+                                loading={loading}
+                                onRefresh={handleRefresh}
+                            />
+                        </Suspense>
                     </TabsContent>
                 </Tabs>
             </div>
