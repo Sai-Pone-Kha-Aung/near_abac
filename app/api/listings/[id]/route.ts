@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import {
   handleAPIError,
   createSuccessResponse,
@@ -8,11 +7,9 @@ import {
 } from "@/utils/api-error";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { deleteImageFromImageKitByUrl } from "@/lib/image-upload";
+import { createAdminClient } from "@/utils/supabase/client";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = createAdminClient();
 
 export async function GET(
   request: NextRequest,
@@ -113,6 +110,14 @@ export async function PUT(
         {
           message: "User not authenticated",
           code: "User_Not_Authenticated",
+        },
+      ]);
+    }
+    if (!params.id) {
+      throw new ValidationError("Listing ID is required", [
+        {
+          message: "Listing ID is required",
+          code: "Listing_ID_Required",
         },
       ]);
     }

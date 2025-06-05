@@ -8,11 +8,9 @@ import {
 } from "@/utils/api-error";
 import { CategoryQuerySchema } from "@/utils/validation/schema";
 import { validateSearchParams } from "@/utils/validation/middleware";
+import { createAdminClient } from "@/utils/supabase/client";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = createAdminClient();
 
 export async function GET(request: NextRequest) {
   try {

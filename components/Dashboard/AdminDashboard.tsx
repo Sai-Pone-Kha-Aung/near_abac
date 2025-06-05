@@ -2,18 +2,21 @@
 import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Coffee, Home, ListFilter, Plus, RefreshCcw, Trash, Utensils } from 'lucide-react'
+import { ArrowUpDown, Edit, Eye, Plus, RefreshCcw, Trash } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { XAxis, YAxis, Tooltip, CartesianGrid, Bar } from 'recharts'
-import Table from 'antd/es/table'
-import { SortOrder } from 'antd/es/table/interface';
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useUsers } from '@/hooks/useUser'
 import { usePaginationListings } from '@/hooks/usePaginationListings'
+import CustomTable from '@/components/Table/Custom-Table'
+import { ColumnDef } from '@tanstack/react-table'
+import { Listing } from '@/types/types'
 
 const ResponsiveContainer = dynamic(() =>
-    import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false }
+    import('recharts').then((mod) => mod.ResponsiveContainer), {
+    ssr: false
+}
 );
 const BarChart = dynamic(() =>
     import('recharts').then((mod) => mod.BarChart), { ssr: false }
@@ -38,54 +41,6 @@ const visitData = [
     { name: 'Sun', visits: 590 },
 ];
 
-const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id', defaultSortOrder: 'ascend' as SortOrder, sorter: (a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id) },
-    { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
-    { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'Role', dataIndex: 'role', key: 'role' },
-    { title: 'Created At', dataIndex: 'created_at', key: 'created_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { created_at: string }, b: { created_at: string }) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime() },
-    { title: 'Updated At', dataIndex: 'updated_at', key: 'updated_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { updated_at: string }, b: { updated_at: string }) => new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime() },
-    {
-        title: 'Actions',
-        key: 'actions',
-        render: (text: any, record: { id: string }) => (
-            <Button size="sm" variant="destructive" onClick={() => console.log(`Delete user ${record.id}`)}>
-                <Trash className='w-4 h-4' />
-            </Button>
-        )
-    }
-]
-
-const listingsColumns = [
-    {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-        defaultSortOrder: 'ascend' as SortOrder,
-        sorter: (a: { id: string }, b: { id: string }) => {
-            const numA = parseInt(String(a.id || '0'));
-            const numB = parseInt(String(b.id || '0'));
-            return numA - numB;
-        }
-    },
-    { title: 'User ID', dataIndex: 'user_id', key: 'user_id' },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Category', dataIndex: 'category', key: 'category' },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
-    { title: 'Address', dataIndex: 'address', key: 'address' },
-    { title: 'Phone', dataIndex: 'phone', key: 'phone' },
-    { title: 'Google Map Link', dataIndex: 'google_map_link', key: 'google_map_link' },
-    { title: 'Line ID', dataIndex: 'line_id', key: 'line_id' },
-    { title: 'Facebook URL', dataIndex: 'facebook_url', key: 'facebook_url' },
-    { title: 'Instagram URL', dataIndex: 'instagram_url', key: 'instagram_url' },
-    { title: 'Image URL', dataIndex: 'img_url', key: 'img_url' },
-    { title: 'Distance', dataIndex: 'distance', key: 'distance' },
-    { title: 'Created At', dataIndex: 'created_at', key: 'created_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { created_at: string }, b: { created_at: string }) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime() },
-    { title: 'Updated At', dataIndex: 'updated_at', key: 'updated_at', defaultSortOrder: 'descend' as SortOrder, sorter: (a: { updated_at: string }, b: { updated_at: string }) => new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime() },
-]
-
-
 const overview_card: OverviewCardProps[] = [
     {
         title: "Total Listings",
@@ -107,11 +62,115 @@ const overview_card: OverviewCardProps[] = [
     }
 ]
 
+
 const AdminDashboard = () => {
     const router = useRouter();
-    const { listings, pagination, setPage } = usePaginationListings();
+    const { listings, pagination, setPage, loading: listingsLoading } = usePaginationListings();
     const { data: users, isLoading: loading, isError: error, refetch } = useUsers();
-
+    const listingColumns: ColumnDef<Listing>[] = [
+        {
+            accessorKey: "id",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    ID <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+        },
+        {
+            accessorKey: "name",
+            header: "Name",
+            cell: ({ row }) => {
+                const listing = row.original
+                return (
+                    <div
+                        className="font-medium cursor-pointer hover:text-near-purple"
+                        onClick={() => router.push(`/listing/${listing.id}`)}
+                    >
+                        {listing.name}
+                    </div>
+                )
+            },
+        },
+        {
+            accessorKey: "category",
+            header: "Category",
+            cell: ({ row }) => {
+                const category = row.getValue("category") as string
+                return (
+                    //   <Badge variant="outline" className="capitalize">
+                    //     {category.replace('-', ' ')}
+                    //   </Badge>
+                    <>
+                        {category.replace('-', ' ')}
+                    </>
+                )
+            },
+        },
+        {
+            accessorKey: "description",
+            header: "Description",
+            cell: ({ row }) => (
+                <div className="max-w-[200px] truncate">
+                    {row.getValue("description")}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "address",
+            header: "Address",
+            cell: ({ row }) => (
+                <div className="max-w-[150px] truncate">
+                    {row.getValue("address")}
+                </div>
+            ),
+        },
+        {
+            accessorKey: "distance",
+            header: "Distance",
+        },
+        {
+            accessorKey: "created_at",
+            header: ({ column }) => (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Created <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => {
+                const date = new Date(row.getValue("created_at"))
+                return date.toLocaleDateString()
+            },
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => {
+                const listing = row.original
+                return (
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => router.push(`/listing/${listing.id}`)}
+                        >
+                            <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => router.push(`/edit-listing/${listing.id}`)}
+                        >
+                            <Edit className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )
+            },
+        },
+    ]
     const handlePageChange = (newPage: number) => {
         // Logic to handle page change
         setPage(newPage);
@@ -122,6 +181,7 @@ const AdminDashboard = () => {
         current: pagination.page,
         total: pagination.total,
         totalPages: pagination.totalPages,
+        pageSize: pagination.limit,
         showTotal: (total: number, range: [number, number]) =>
             `${range[0]}-${range[1]} of ${total} items`,
         onChange: handlePageChange,
@@ -220,28 +280,21 @@ const AdminDashboard = () => {
                         </Card>
                     </TabsContent>
                     <TabsContent value='listings'>
-                        <Card>
-                            <CardHeader className='flex flex-col md:flex-row justify-between items-start md:items-center'>
-                                <div >
-                                    <CardTitle className='mb-1'>All Listings</CardTitle>
-                                    <CardDescription>
-                                        Manage all listings
-                                    </CardDescription>
-                                </div>
-                            </CardHeader>
-                            <CardContent >
-                                <div className='flex flex-col overflow-x-auto p-6'>
-                                    <Table
-                                        columns={listingsColumns}
-                                        dataSource={listings}
-                                        showSorterTooltip={{ target: 'sorter-icon' }}
-                                        pagination={{ ...paginationConfig }}
-                                        rowKey="id"
-                                        scroll={{ x: 'max-content' }}
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
+                        <div>
+                            <CustomTable
+                                columns={listingColumns}
+                                data={listings}
+                                title="Listings"
+                                description="Manage all listings"
+                                showAddButton={false}
+                                searchKey="name"
+                                searchPlaceholder="Search listings..."
+                                pageSize={12}
+                                serverSidePagination={true}
+                                paginationConfig={paginationConfig}
+
+                            />
+                        </div>
                     </TabsContent>
                     <TabsContent value='users'>
                         <Card>
@@ -265,7 +318,9 @@ const AdminDashboard = () => {
                                         </div>
                                         <p className='text-center text-gray-500'>Loading ...</p>
                                     </div>
-                                ) : (<Table columns={columns} dataSource={users} showSorterTooltip={{ target: 'sorter-icon' }} />)}
+                                ) : (<>
+                                    Table
+                                </>)}
                             </CardContent>
                         </Card>
                     </TabsContent>
