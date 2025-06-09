@@ -64,29 +64,9 @@ const Map = () => {
                             allowFullScreen
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
+                            title="Google Map of Assumption University"
                         ></iframe>
                     </div>
-
-                    {/* <div className='absolute top-4 left-4 bg-white/90 backdrop:blur-sm rounded-lg shadow-lg max-w-[300px] z-10 glass-effect'>
-                        <div className='flex items-start gap-3 p-3'>
-                            <div className='bg-near-purple rounded-full p-2 mt-1'>
-                                <MapPin className='w-4 h-4 text-white' />
-                            </div>
-                            <div>
-                                <h3 className='font-bold text-gray-900 '>
-                                    Assumption University
-                                </h3>
-                                <p className='text-sm text-gray-600 mt-1'>88 Moo 8 Bang Na-Trad Km. 26, Bangsaothong, Samuthprakarn 10570, Thailand</p>
-                                <div className='mt-3'>
-                                    <Link href="https://maps.app.goo.gl/Tvb2BPkEM2bqwUKq5" target="_blank" className='text-near-purple text-sm hover:underline'>
-                                        Get Direction
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div> */}
-
-
                 </div>
                 <div className={cn('flex justify-center gap-4 mt-8 transition-all duration-500 transform', isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')}>
                     <Button className='bg-near-purple hover:bg-near-purple-dark text-white px-6 py-3 rounded-full transition-colors shadow-md' onClick={handleFindNearbyPlaces}>Find Nearby Places</Button>

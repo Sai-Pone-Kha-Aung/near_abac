@@ -19,13 +19,13 @@ const Hero = () => {
                 <div className='absolute inset-0 bg-black/35 z-10'>
                 </div>
                 <Image
-                    src={`${imageKitEndpoint}/heroimg.jpg?tr=w-1920,h-1080,q-85,f-webp`}
+                    src={`${imageKitEndpoint}/heroimg.jpg?tr=w-1200,h-800,q-85,f-webp`}
                     alt='heroimage'
                     onLoad={() => setIsLoaded(true)}
                     className={`w-full h-full object-cover backdrop:blur-sm`}
                     blurDataURL={`${imageKitEndpoint}/heroimg.jpg?tr=w-10,h-10,cm-extract`}
-                    width={1920}
-                    height={1080}
+                    width={1200}
+                    height={800}
                     priority
                     fetchPriority='high'
                     sizes='100vw'
@@ -46,15 +46,25 @@ const Hero = () => {
                     )}
                 >
 
-                    <Button variant='default' className='bg-near-purple text-white hover:bg-near-purple-dark transition-colors w-[200px]'>
-                        {isLoggedIn ? (<Link href='/add-listing'>
-                            Add Your Place
-                        </Link>) : (
-                            <Link href='/sign-in'>
+                    {isLoggedIn ? (
+                        <Link href='/add-listing' className="inline-block">
+                            <Button
+                                variant='default'
+                                className='bg-near-purple text-white hover:bg-near-purple-dark transition-colors min-w-[280px] min-h-[48px] px-8 py-3 text-base touch-manipulation'
+                            >
+                                Add Your Place
+                            </Button>
+                        </Link>
+                    ) : (
+                        <Link href='/sign-in' className="inline-block">
+                            <Button
+                                variant='default'
+                                className='bg-near-purple text-white hover:bg-near-purple-dark transition-colors min-w-[280px] min-h-[48px] px-8 py-3 text-base touch-manipulation'
+                            >
                                 Sign in to add your place
-                            </Link>
-                        )}
-                    </Button>
+                            </Button>
+                        </Link>
+                    )}
                 </div>
             </div>
 

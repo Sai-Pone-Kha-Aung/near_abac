@@ -10,56 +10,47 @@ import { usePaginationListings } from '@/hooks/usePaginationListings'
 import { useListingColumns } from '@/components/Dashboard/hooks/useListingColumns'
 import dynamic from 'next/dynamic'
 
-// Dynamic imports for tab components
+const CardSkeleton = ({ height = "h-80" }: { height?: string }) => (
+    <Card>
+        <CardHeader>
+            <div className="animate-pulse">
+                <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+            </div>
+        </CardHeader>
+        <CardContent>
+            <div className={`${height} bg-gray-300 rounded animate-pulse`}></div>
+        </CardContent>
+    </Card>
+)
+
+const ListingSkeleton = () => (
+    <div className="p-6">
+        <div className="animate-pulse">
+            <div className="h-8 bg-gray-300 rounded mb-4"></div>
+            <div className="h-4 bg-gray-300 rounded mb-6 w-1/3"></div>
+            <div className="space-y-4">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="h-12 bg-gray-300 rounded"></div>
+                ))}
+            </div>
+        </div>
+    </div>
+)
+
 const AnalyticsTab = dynamic(() => import('@/components/Dashboard/components/AnalyticsTab'), {
     ssr: false,
-    loading: () => (
-        <Card>
-            <CardHeader>
-                <div className="animate-pulse">
-                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div className="h-80 bg-gray-300 rounded animate-pulse"></div>
-            </CardContent>
-        </Card>
-    )
+    loading: () => <CardSkeleton />
 })
 
 const ListingsTab = dynamic(() => import('@/components/Dashboard/components/ListingTab'), {
     ssr: false,
-    loading: () => (
-        <div className="p-6">
-            <div className="animate-pulse">
-                <div className="h-8 bg-gray-300 rounded mb-4"></div>
-                <div className="h-4 bg-gray-300 rounded mb-6 w-1/3"></div>
-                <div className="space-y-4">
-                    {[...Array(5)].map((_, i) => (
-                        <div key={i} className="h-12 bg-gray-300 rounded"></div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    )
+    loading: () => <ListingSkeleton />
 })
 
 const UsersTab = dynamic(() => import('@/components/Dashboard/components/UserTab'), {
     ssr: false,
-    loading: () => (
-        <Card>
-            <CardHeader>
-                <div className="animate-pulse">
-                    <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div className="h-32 bg-gray-300 rounded animate-pulse"></div>
-            </CardContent>
-        </Card>
-    )
+    loading: () => <CardSkeleton height="h-32" />
 })
 
 type OverviewCardProps = {
@@ -195,17 +186,7 @@ const AdminDashboard = () => {
 
                     <TabsContent value='analytics'>
                         <Suspense fallback={
-                            <Card>
-                                <CardHeader>
-                                    <div className="animate-pulse">
-                                        <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                                        <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="h-80 bg-gray-300 rounded animate-pulse"></div>
-                                </CardContent>
-                            </Card>
+                            <CardSkeleton />
                         }>
                             <AnalyticsTab />
                         </Suspense>
@@ -213,17 +194,7 @@ const AdminDashboard = () => {
 
                     <TabsContent value='listings'>
                         <Suspense fallback={
-                            <div className="p-6">
-                                <div className="animate-pulse">
-                                    <div className="h-8 bg-gray-300 rounded mb-4"></div>
-                                    <div className="h-4 bg-gray-300 rounded mb-6 w-1/3"></div>
-                                    <div className="space-y-4">
-                                        {[...Array(5)].map((_, i) => (
-                                            <div key={i} className="h-12 bg-gray-300 rounded"></div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+                            <ListingSkeleton />
                         }>
                             <ListingsTab
                                 listings={listings}
@@ -235,17 +206,7 @@ const AdminDashboard = () => {
 
                     <TabsContent value='users'>
                         <Suspense fallback={
-                            <Card>
-                                <CardHeader>
-                                    <div className="animate-pulse">
-                                        <div className="h-6 bg-gray-300 rounded mb-2"></div>
-                                        <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="h-32 bg-gray-300 rounded animate-pulse"></div>
-                                </CardContent>
-                            </Card>
+                            <CardSkeleton />
                         }>
                             <UsersTab
                                 users={users || []}

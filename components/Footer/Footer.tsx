@@ -37,7 +37,7 @@ const Footer = () => {
                                 <span>NEAR ABAC</span>
                             </Link>
                         </div>
-                        <p className='text-gray-400 leading-relaxed'>
+                        <p className='text-gray-300 leading-relaxed'>
                             Your go-to guide for exploring everything around Assumption University,
                             from accommodations to food and entertainment.
                         </p>
@@ -48,7 +48,7 @@ const Footer = () => {
                                 className="flex-shrink-0"
                                 aria-label="Facebook"
                             >
-                                <Facebook className='h-6 w-6 text-gray-400 hover:text-near-purple transition-colors duration-300' />
+                                <Facebook className='h-6 w-6 text-gray-300 hover:text-near-purple transition-colors duration-300' />
                             </Link>
                             <Link
                                 href="https://www.instagram.com/nearabac/"
@@ -56,7 +56,7 @@ const Footer = () => {
                                 className="flex-shrink-0"
                                 aria-label="Instagram"
                             >
-                                <Instagram className='h-6 w-6 text-gray-400 hover:text-near-purple transition-colors duration-300' />
+                                <Instagram className='h-6 w-6 text-gray-300 hover:text-near-purple transition-colors duration-300' />
                             </Link>
                         </div>
                     </div>
@@ -69,7 +69,7 @@ const Footer = () => {
                                 <Link
                                     href={link.url}
                                     key={link.id}
-                                    className='text-gray-400 hover:text-white transition-colors duration-300 py-1 h-8 flex items-center'
+                                    className='text-gray-300 hover:text-white transition-colors duration-300 py-1 h-8 flex items-center'
                                 >
                                     {link.title}
                                 </Link>
@@ -82,25 +82,25 @@ const Footer = () => {
                         <h3 className="text-lg font-medium mb-4 h-7">Contact Us</h3>
                         <ul className="space-y-3">
                             <li className="flex items-start gap-3 min-h-[60px]">
-                                <MapPin className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-400 leading-relaxed">
+                                <MapPin className="h-5 w-5 text-gray-300 mt-0.5 flex-shrink-0" />
+                                <span className="text-gray-300 leading-relaxed">
                                     Assumption University, Bang Na, Bangkok, Thailand
                                 </span>
                             </li>
                             <li className="flex items-center gap-3 min-h-[32px]">
-                                <Mail className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                                <Mail className="h-5 w-5 text-gray-300 flex-shrink-0" />
                                 <Link
                                     href="mailto:contact@nearabac.com"
-                                    className="text-gray-400 hover:text-white transition-colors"
+                                    className="text-gray-300 hover:text-white transition-colors"
                                 >
                                     contact@nearabac.com
                                 </Link>
                             </li>
                             <li className="flex items-center gap-3 min-h-[32px]">
-                                <Phone className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                                <Phone className="h-5 w-5 text-gray-300 flex-shrink-0" />
                                 <Link
                                     href="tel:+6623004543"
-                                    className="text-gray-400 hover:text-white transition-colors"
+                                    className="text-gray-300 hover:text-white transition-colors"
                                 >
                                     +66 9 6278 0348
                                 </Link>
@@ -111,7 +111,7 @@ const Footer = () => {
                     {/* Newsletter Section */}
                     <div className='min-h-[200px]'>
                         <h3 className="text-lg font-medium mb-4 h-7">Stay Updated</h3>
-                        <p className='text-gray-400 mb-4 leading-relaxed'>
+                        <p className='text-gray-300 mb-4 leading-relaxed'>
                             Subscribe to our newsletter to get the latest updates about places near ABAC.
                         </p>
                         <form onSubmit={handleSubmit} className='flex w-full max-w-sm'>
@@ -133,17 +133,17 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Footer Bottom - Fix: Remove hydration check */}
-                <div className='border-t border-gray-800 pt-8 text-center text-gray-500 text-sm min-h-[80px]'>
+                {/* Footer Bottom - Fix: Improve contrast */}
+                <div className='border-t border-gray-800 pt-8 text-center text-gray-300 text-sm min-h-[80px]'>
                     <p className="mb-2">
                         © {currentYear} NEAR ABAC. All rights reserved.
                     </p>
                     <div className="space-x-4">
-                        <Link href="#" className="hover:text-gray-400 transition-colors">
+                        <Link href="#" className="hover:text-white transition-colors">
                             Privacy Policy
                         </Link>
-                        <span className="text-gray-600">|</span>
-                        <Link href="#" className="hover:text-gray-400 transition-colors">
+                        <span className="text-gray-500">|</span>
+                        <Link href="#" className="hover:text-white transition-colors">
                             Terms of Service
                         </Link>
                     </div>

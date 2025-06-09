@@ -50,10 +50,6 @@ const Page = () => {
                             <div className='animate-spin rounded-full h-16 w-16 border-t-2 border-near-purple'></div>
                             <p className='ml-4 text-gray-500'>Loading categories...</p>
                         </div>
-                    ) : error ? (
-                        <div className='text-red-500 text-center py-8'>
-                            Error loading categories: {error}
-                        </div>
                     ) : (
                         <>
                             {viewMode === 'grid' ? (
