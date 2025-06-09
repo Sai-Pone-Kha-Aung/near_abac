@@ -19,7 +19,7 @@ const Hero = () => {
                 <div className='absolute inset-0 bg-black/35 z-10'>
                 </div>
                 <Image
-                    src={`${imageKitEndpoint}/heroimg.jpg`}
+                    src={`${imageKitEndpoint}/heroimg.jpg?tr=w-1920,h-1080,q-85,f-webp`}
                     alt='heroimage'
                     onLoad={() => setIsLoaded(true)}
                     className={`w-full h-full object-cover backdrop:blur-sm`}
@@ -30,6 +30,7 @@ const Hero = () => {
                     fetchPriority='high'
                     sizes='100vw'
                     placeholder='blur'
+                    quality={85}
                 />
             </div>
 

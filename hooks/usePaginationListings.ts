@@ -70,7 +70,8 @@ async function fetchPaginatedListings({
 
 export function usePaginationListings(
   category?: string,
-  limit: number = 12
+  limit: number = 12,
+  enable: boolean = true
 ): UsePaginationListingsResult {
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -93,6 +94,7 @@ export function usePaginationListings(
     placeholderData: keepPreviousData, // Keeps previous data while loading new page
     staleTime: 1000 * 60 * 2, // 2 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    enabled: enable,
   });
 
   const handleSetSearchTerm = useCallback((search: string) => {

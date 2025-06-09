@@ -1,9 +1,6 @@
 import React from 'react'
 import Head from 'next/head';
-import dynamic from 'next/dynamic';
-const LandingPage = dynamic(() => import('@/components/Landing/LandingPage'), {
-  ssr: false,
-});
+import LandingPage from '@/components/Landing/LandingPage';
 
 const HomePage = () => {
   return (

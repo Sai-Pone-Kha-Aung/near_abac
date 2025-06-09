@@ -20,12 +20,13 @@ async function fetchUser(): Promise<User[]> {
   }
 }
 
-export function useUsers() {
+export function useUsers(enabled: boolean = true) {
   return useQuery({
     queryKey: ["users"],
     queryFn: fetchUser,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
     refetchOnWindowFocus: false,
+    enabled: enabled, // Add conditional loading
   });
 }
