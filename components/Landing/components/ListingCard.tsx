@@ -37,8 +37,8 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
                     alt="nearabac listing image"
                     className={cn('w-full h-full object-cover transition-opacity duration-500')}
                     onLoad={() => setImageLoaded(true)}
-                    width={1920}
-                    height={1080}
+                    width={350}
+                    height={265}
                     priority
                 />
 

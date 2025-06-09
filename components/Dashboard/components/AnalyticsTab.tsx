@@ -16,7 +16,6 @@ const WeeklyVisitsChart = dynamic(() => import('@/components/Dashboard/component
             </CardContent>
         </Card>
     )
-
 })
 
 const AnalyticsTab = () => {

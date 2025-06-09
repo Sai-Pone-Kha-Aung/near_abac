@@ -9,6 +9,7 @@ import ListingCard from '@/components/Landing/components/ListingCard'
 import { Button } from '@/components/ui/button'
 import { useCategories } from '@/hooks/useCategories'
 import { usePaginationListings } from '@/hooks/usePaginationListings'
+import HeaderContent from '@/components/HeaderContent.Component'
 
 const Page = () => {
   const slug = useParams().slug as string;
@@ -99,72 +100,24 @@ const Page = () => {
     return pages;
   }
 
+  const headerTitle = category ? category.name.charAt(0).toUpperCase() + category.name.slice(1) : 'Category';
+
   return (
     <div className='min-h-screen bg-near-gray flex flex-col'>
       <main className='flex-1 pt-10 pb-16'>
         <div className='container mx-auto px-4'>
-          <div className='mb-8 flex flex-col md:flex-row md:items-center md:justify-between'>
-            <div>
-              <div className='flex items-center mb-2'>
-                <Link href='/categories' className='flex items-center gap-1 text-near-purple hover:text-near-purple-dark transition-colors text-sm'>
-                  <ArrowLeft className='w-4 h-4' />
-                  <span>Back to Categories</span>
-                </Link>
-              </div>
-              {category && (
-                <div className='flex items-center gap-4 mt-4'>
-                  <div className='h-12 w-12 bg-near-purple/10 rounded-full flex items-center justify-center '>
-                    <CategoryIcon
-                      type={category.name}
-                      size={6}
-                    />
-                  </div>
-                  <div>
-                    <h1 className='text-3xl font-bold md:text-4xl'>{category.name.charAt(0).toUpperCase() + category.name.slice(1)}</h1>
-                    <p className='text-gray-600'>{
-                      pagination.total
-                    } places around Assumption University</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className='bg-white rounded-xl shadow-sm p-4 mt-6'>
-            <div className='flex flex-col md:flex-row gap-4 items-center'>
-              <div className='relative flex-1'>
-                <Search className='absolute w-4 h-4 left-3 top-1/2 transform -translate-y-1/2 text-gray-500' />
-                <input
-                  type="text"
-                  placeholder="Search by name"
-                  className="w-full pl-10 border border-gray-200 rounded-md pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-near-purple/20 focus:border-near-purple/20"
-                  value={inputValue}
-                  onChange={handleSearchChange} />
-              </div>
-              <div className='flex-shrink-0 flex items-center gap-4'>
-                <Filter className='text-gray-500 w-4 h-4' />
-                <span className='text-gray-500 text-sm'>Distance:</span>
-                <Select
-                  value={distance}
-                  onValueChange={handleSelectChange}
-                >
-                  <SelectTrigger className='focus:outline-none focus:ring-2 focus:ring-near-purple/20 focus:border-near-purple/20'>
-                    <SelectValue placeholder='Select distance' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='1'>1 km</SelectItem>
-                    <SelectItem value='2'>2 km</SelectItem>
-                    <SelectItem value='3'>3 km</SelectItem>
-                    <SelectItem value='4'>4 km</SelectItem>
-                    <SelectItem value='5'>5 km</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button onClick={clearAllFilters} variant="outline" className='flex items-center justify-center'>
-                Clear Filters
-              </Button>
-            </div>
-          </div>
+          <HeaderContent
+            header={headerTitle}
+            back_str='Categories'
+            back_url='/categories'
+            category={category}
+            totalCount={pagination.total}
+            showSearchFilter={true}
+            searchValue={inputValue}
+            onSearchChange={handleSearchChange}
+            distanceValue={distance}
+            onDistanceChange={handleSelectChange}
+            onClearFilters={clearAllFilters} description={''} />
 
           {loading ? (
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mt-6'>

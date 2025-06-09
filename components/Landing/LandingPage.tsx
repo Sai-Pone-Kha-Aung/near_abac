@@ -1,18 +1,9 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import dynamic from 'next/dynamic'
-const Hero = dynamic(() => import('@/components/Landing/components/Hero'), {
-    ssr: false,
-})
-const Categories = dynamic(() => import('@/components/Landing/components/Categories'), {
-    ssr: false,
-})
-const Map = dynamic(() => import('@/components/Landing/components/Map'), {
-    ssr: false,
-})
-const FeaturedListing = dynamic(() => import('@/components/Landing/features/FeaturedListing'), {
-    ssr: false,
-})
+import Hero from '@/components/Landing/components/Hero'
+import Categories from '@/components/Landing/components/Categories'
+import Map from '@/components/Landing/components/Map'
+import FeaturedListing from '@/components/Landing/features/FeaturedListing'
 
 const LandingPage = () => {
     const [mounted, setMounted] = useState(false)

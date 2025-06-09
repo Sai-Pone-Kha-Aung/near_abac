@@ -8,8 +8,9 @@ import { SignOutButton, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import Mobile from '@/components/Navbar/Mobile'; // Assuming you have a Mobile component for mobile navigation
 
-const Mobile = dynamic(() => import('@/components/Navbar/Mobile'), { ssr: false });
+// const Mobile = dynamic(() => import('@/components/Navbar/Mobile'), { ssr: false });
 
 const SearchDialog = dynamic(() => import('@/components/Search/SearchDialog'), { ssr: true });
 

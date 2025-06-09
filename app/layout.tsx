@@ -5,14 +5,8 @@ import { ViewTransitions } from "next-view-transitions";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { QueryProvider } from "@/components/Provider/QueryProvider";
-import dynamic from "next/dynamic";
-
-const Footer = dynamic(() => import('@/components/Footer/Footer'), {
-  ssr: false,
-})
-const Navbar = dynamic(() => import('@/components/Navbar/Navbar'), {
-  ssr: false,
-})
+import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -38,12 +32,14 @@ export default function RootLayout({
       <ViewTransitions>
         <html lang="en" className={inter.variable}>
           <body className={cn(
-            'antialiased min-h-screen flex flex-col',
+            'antialiased hydration-stable',
             inter.variable
           )}>
             <QueryProvider>
               <Navbar />
-              {children}
+              <main className="min-h-screen flex flex-col">
+                {children}
+              </main>
               <Footer />
             </QueryProvider>
           </body>

@@ -173,3 +173,42 @@ iframe {
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
 }
+
+/* Prevent hydration layout shifts */
+.hydration-stable {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure consistent spacing */
+header.navbar-stable {
+  flex-shrink: 0;
+}
+
+main.content-stable {
+  flex: 1;
+  min-height: 0;
+}
+
+footer.footer-stable {
+  flex-shrink: 0;
+}
+
+/* Prevent flash of unstyled content */
+.prevent-fouc {
+  visibility: hidden;
+}
+
+.prevent-fouc.loaded {
+  visibility: visible;
+}
+
+/* Ensure consistent button heights */
+button,
+.button-like {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
