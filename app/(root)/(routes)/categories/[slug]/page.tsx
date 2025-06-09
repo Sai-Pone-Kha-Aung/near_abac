@@ -1,10 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, ChevronLeft, ChevronRight, Filter, Search } from 'lucide-react'
-import { CategoryIcon } from '@/components/CategoryIcon'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import ListingCard from '@/components/Landing/components/ListingCard'
 import { Button } from '@/components/ui/button'
 import { useCategories } from '@/hooks/useCategories'
@@ -14,7 +11,7 @@ import HeaderContent from '@/components/HeaderContent.Component'
 const Page = () => {
   const slug = useParams().slug as string;
   const { data: categories } = useCategories();
-  const { listings, loading, error, pagination, setPage, setSearchTerm, searchTerm, setDistance, distance } = usePaginationListings(slug, 12);
+  const { listings, loading, pagination, setPage, setSearchTerm, searchTerm, setDistance, distance } = usePaginationListings(slug, 12);
   const [inputValue, setInputValue] = useState('');
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
   const category = categories?.find(cat => cat.name === slug)

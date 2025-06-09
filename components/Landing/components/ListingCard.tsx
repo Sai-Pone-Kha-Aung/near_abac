@@ -33,7 +33,7 @@ const ListingCard = ({ listing, index }: ListingCardProps) => {
         >
             <div className='relative aspect-[4/3] overflow-hidden'>
                 <Image
-                    src={listing.img_url}
+                    src={`${listing.img_url}?tr=w-350,h-265,q-85,f-webp`}
                     alt="nearabac listing image"
                     className={cn('w-full h-full object-cover transition-opacity duration-500')}
                     onLoad={() => setImageLoaded(true)}
