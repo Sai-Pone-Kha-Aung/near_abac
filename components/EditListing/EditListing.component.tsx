@@ -15,7 +15,39 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { APIError, handleAPIError } from '@/utils/api-error'
 import { useDeleteListing, useUpdateListing } from '@/hooks/useUpdateListing'
-import { toast, ToastContainer } from 'react-toastify'
+
+const showToast = async (message: string, type: 'success' | 'error' = 'success') => {
+    const { toast, ToastContainer } = await import('react-toastify')
+    const { createRoot } = await import('react-dom/client')
+
+    // Ensure ToastContainer exists
+    let toastContainer = document.getElementById('toast-root')
+    if (!toastContainer) {
+        toastContainer = document.createElement('div')
+        toastContainer.id = 'toast-root'
+        document.body.appendChild(toastContainer)
+        const root = createRoot(toastContainer)
+        root.render(<ToastContainer />)
+    }
+
+    return type === 'success'
+        ? toast.success(message, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        })
+        : toast.error(message, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        })
+}
 
 type FormData = {
     name: string;
@@ -121,20 +153,14 @@ const EditListing = ({ listingId }: EditListingProps) => {
             }
 
             const result = await updateListingData.mutateAsync(updateData);
-            toast.success('Listing updated successfully!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            await showToast('Listing updated successfully!', 'success');
             setTimeout(() => {
                 router.push(`/listing/${listingId}`);
             }, 3000);
         } catch (error) {
             const errorMessage = error instanceof APIError ? error.message : 'An unexpected error occurred';
             handleAPIError(errorMessage);
+            await showToast(errorMessage, 'error');
             console.error('Error submitting form:', error);
         }
     }
@@ -345,7 +371,7 @@ const EditListing = ({ listingId }: EditListingProps) => {
                     </form>
                 </div>
             </div>
-            <ToastContainer />
+            <div id="toast-container"></div>
         </div>
     )
 }

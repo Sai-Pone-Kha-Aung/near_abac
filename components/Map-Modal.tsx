@@ -1,12 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// Dynamically import Google Maps components to reduce initial bundle size
+const GoogleMap = dynamic(
+    () => import("@react-google-maps/api").then((mod) => mod.GoogleMap),
+    { ssr: false }
+);
+const LoadScript = dynamic(
+    () => import("@react-google-maps/api").then((mod) => mod.LoadScript),
+    { ssr: false }
+);
+const Marker = dynamic(
+    () => import("@react-google-maps/api").then((mod) => mod.Marker),
+    { ssr: false }
+);
 
 interface MapModalProps {
     open: boolean;
@@ -100,7 +112,7 @@ const MapModal: React.FC<MapModalProps> = ({
 
             <div className="border rounded-md overflow-hidden h-[600px]">
                 {apiKey ? (
-                    <LoadScript googleMapsApiKey={apiKey}>
+                    <LoadScript googleMapsApiKey={apiKey} id="google-maps-script">
                         <GoogleMap
                             mapContainerStyle={containerStyle}
                             center={coordinates || defaultCenter}
