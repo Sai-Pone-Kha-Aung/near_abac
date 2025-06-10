@@ -19,18 +19,16 @@ const Hero = () => {
                 <div className='absolute inset-0 bg-black/35 z-10'>
                 </div>
                 <Image
-                    src={`${imageKitEndpoint}/heroimg.jpg?tr=w-1200,h-800,q-85,f-webp`}
+                    src={`${imageKitEndpoint}/hero_image.webp?tr=w-1200,h-800,q-85,cm-exif`}
                     alt='heroimage'
-                    onLoad={() => setIsLoaded(true)}
-                    className={`w-full h-full object-cover backdrop:blur-sm`}
-                    blurDataURL={`${imageKitEndpoint}/heroimg.jpg?tr=w-10,h-10,cm-extract`}
+                    className={`w-full h-full object-cover`}
                     width={1200}
-                    height={800}
-                    priority
-                    fetchPriority='high'
-                    sizes='100vw'
-                    placeholder='blur'
+                    height={1000}
+                    sizes='(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1200px'
                     quality={85}
+                    priority={true}
+                    loading='eager'
+                    onLoad={() => setIsLoaded(true)}
                 />
             </div>
 
