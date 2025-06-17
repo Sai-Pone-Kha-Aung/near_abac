@@ -3,6 +3,10 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  webpack: (config) => {
+    config.externals.push("pino-pretty", "lokijs", "encoding");
+    return config;
+  },
   images: {
     remotePatterns: [
       {
@@ -21,6 +25,15 @@ const nextConfig = {
         port: "",
       },
     ],
+  },
+  turbopack: {
+    rules: {
+      "*.ts": {
+        loaders: [],
+        as: "*.ts",
+      },
+      resolveExtensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
+    },
   },
 };
 

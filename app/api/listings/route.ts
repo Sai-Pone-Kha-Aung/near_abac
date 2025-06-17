@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -173,7 +173,7 @@ export async function PUT(
       ]);
     }
 
-    const listingId = params.id;
+    const { id: listingId } = await params;
 
     const { data: existingListing, error: fetchError } = await supabase
       .from("listings")
@@ -232,7 +232,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -246,7 +246,7 @@ export async function DELETE(
       ]);
     }
 
-    const listingId = params.id;
+    const { id: listingId } = await params;
 
     const { data, error } = await supabase
       .from("listings")

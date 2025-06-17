@@ -1,5 +1,4 @@
-import dynamic from 'next/dynamic'
-const ProfilePageComponent = dynamic(() => import('@/components/Profile/Profile.component'), { ssr: false })
+import ProfilePageComponent from '@/components/Profile/Profile.component'
 
 const Page = () => {
     return (

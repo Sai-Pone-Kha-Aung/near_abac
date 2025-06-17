@@ -79,7 +79,7 @@ const EditListing = ({ listingId }: EditListingProps) => {
     const isSubmitting = updateListingData.isPending;
 
 
-    const formData: ZodType<FormData> = z.object({
+    const formData = z.object({
         name: z.string().min(1, { message: "Name is required" }),
         category: z.string().min(1, { message: "Category is required" }),
         address: z.string().min(1, { message: "Address is required" }),
