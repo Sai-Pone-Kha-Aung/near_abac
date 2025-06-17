@@ -17,7 +17,7 @@ import { useCreateListing } from '@/hooks/useCreateListing'
 const showToast = async (message: string, type: 'success' | 'error' = 'success') => {
     const { toast, ToastContainer } = await import('react-toastify')
     const { createRoot } = await import('react-dom/client')
-    
+
     // Ensure ToastContainer exists
     let toastContainer = document.getElementById('toast-root')
     if (!toastContainer) {
@@ -27,7 +27,7 @@ const showToast = async (message: string, type: 'success' | 'error' = 'success')
         const root = createRoot(toastContainer)
         root.render(<ToastContainer />)
     }
-    
+
     return type === 'success'
         ? toast.success(message, {
             position: "top-right",
@@ -63,7 +63,7 @@ type FormData = {
 }
 
 // Form validation schema - create as function to avoid issues with dynamic imports
-const createFormSchema = (): ZodType<FormData> => z.object({
+const createFormSchema = () => z.object({
     name: z.string().min(1, { message: "Name is required" }),
     category: z.string().min(1, { message: "Category is required" }),
     address: z.string().min(1, { message: "Address is required" }),

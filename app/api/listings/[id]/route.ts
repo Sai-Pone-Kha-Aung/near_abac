@@ -13,7 +13,7 @@ const supabase = createAdminClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await currentUser();
@@ -50,7 +50,7 @@ export async function GET(
       ]);
     }
 
-    const userId = params.id;
+    const { id: userId } = await params;
     const isAdmin = user.publicMetadata.role === "admin";
 
     // Check if user can access these listings
@@ -99,7 +99,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -113,7 +113,10 @@ export async function PUT(
         },
       ]);
     }
-    if (!params.id) {
+
+    const { id: listingId } = await params;
+
+    if (!listingId) {
       throw new ValidationError("Listing ID is required", [
         {
           message: "Listing ID is required",
@@ -122,7 +125,6 @@ export async function PUT(
       ]);
     }
 
-    const listingId = params.id;
     const isAdmin = user?.publicMetadata.role === "admin";
 
     // For admins, don't filter by user_id; for regular users, only allow their own listings
@@ -201,7 +203,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -216,7 +218,7 @@ export async function DELETE(
       ]);
     }
 
-    const listingId = params.id;
+    const { id: listingId } = await params;
     const isAdmin = user?.publicMetadata.role === "admin";
 
     const { data: existingListing, error: fetchError } = await supabase
