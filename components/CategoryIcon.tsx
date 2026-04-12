@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookA, Building, Cake, Camera, Coffee, Settings, ShoppingBag, ShoppingBagIcon, Utensils } from 'lucide-react';
+import { BookA, Building, Cake, Camera, Coffee, Settings, ShoppingBagIcon, Utensils } from 'lucide-react';
 
 interface CategoryIconProps {
     type: string;

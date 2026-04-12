@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'next-view-transitions'
 import { Button } from '@/components/ui/button';
-import { MapPin } from 'lucide-react';
+import { MapIcon } from '@/icon/Icons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '../ui/dropdown-menu'
 import { SignOutButton, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
@@ -33,7 +33,7 @@ const Navbar = () => {
         <div className='flex justify-between items-center'>
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-1 text-2xl font-bold text-gray-900">
-            <MapPin className="h-6 w-6 text-near-purple" />
+            <MapIcon width="24" height="24" className="text-near-purple" />
             <span>NEAR ABAC</span>
           </Link>
           {/* Nav */}
